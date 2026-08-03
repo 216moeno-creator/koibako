@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#35000f">
+
+  <title>恋ばこ｜劇場ロビー</title>
+
+  <style>
+    :root {
+      --wine: #500019;
+      --deep-wine: #210009;
+      --black-wine: #120005;
+      --gold: #d9aa46;
+      --light-gold: #ffe8a1;
+      --cream: #fff8e8;
+      --panel: rgba(43, 0, 16, 0.9);
+      --line: rgba(255, 226, 151, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: 86px;
+      color: var(--cream);
+      font-family:
+        "Yu Mincho",
+        "Hiragino Mincho ProN",
+        "Noto Serif JP",
+        serif;
+
+      background:
+        linear-gradient(
+          rgba(20, 0, 7, 0.08),
+          rgba(20, 0, 7, 0.8)
+        ),
+        url("file_00000000187481f897c170cd1a77aa0f.png")
+        center top / cover fixed no-repeat;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      min-height: 62px;
+      padding:
+        max(10px, env(safe-area-inset-top))
+        14px
+        10px;
+
+      background: rgba(39, 0, 14, 0.92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .back-button,
+    .top-icon {
+      width: 42px;
+      height: 42px;
+
+      border: 1px solid var(--line);
+      border-radius: 50%;
+
+      color: var(--light-gold);
+      background: rgba(255, 255, 255, 0.06);
+
+      font-size: 20px;
+    }
+
+    .top-title {
+      color: var(--light-gold);
+      font-size: 21px;
+      font-weight: bold;
+      letter-spacing: 0.12em;
+    }
+
+    .hero {
+      position: relative;
+
+      min-height: 72vh;
+      padding: 24px 18px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        radial-gradient(
+          circle at 50% 7%,
+          rgba(255, 237, 166, 0.34),
+          transparent 25%
+        );
+
+      animation: chandelierGlow 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes chandelierGlow {
+      0%,
+      100% {
+        opacity: 0.55;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .floating-light {
+      position: absolute;
+
+      width: 8px;
+      height: 8px;
+
+      border-radius: 50%;
+
+      background: #fff3b3;
+
+      box-shadow:
+        0 0 8px #fff,
+        0 0 18px #ffd55d;
+
+      opacity: 0;
+
+      animation: floatLight 5s linear infinite;
+    }
+
+    @keyframes floatLight {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.4);
+      }
+
+      20% {
+        opacity: 0.8;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-240px) scale(1.4);
+      }
+    }
+
+    .welcome-panel {
+      position: relative;
+      z-index: 2;
+
+      width: min(100%, 620px);
+      margin: 0 auto;
+
+      padding: 24px 18px;
+
+      text-align: center;
+
+      border: 1px solid var(--line);
+      border-radius: 25px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(78, 0, 28, 0.92),
+          rgba(28, 0, 10, 0.94)
+        );
+
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.55),
+        inset 0 0 30px rgba(255, 220, 123, 0.08);
+
+      backdrop-filter: blur(5px);
+
+      animation: panelAppear 1s ease both;
+    }
+
+    @keyframes panelAppear {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .welcome-small {
+      margin: 0 0 8px;
+
+      color: #e8c675;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+    }
+
+    .welcome-title {
+      margin: 0;
+
+      color: var(--light-gold);
+
+      font-size: clamp(30px, 8vw, 45px);
+      letter-spacing: 0.1em;
+
+      text-shadow:
+        0 3px 6px rgba(0, 0, 0, 0.8),
+        0 0 16px rgba(255, 214, 104, 0.35);
+    }
+
+    .welcome-text {
+      margin: 15px auto 20px;
+
+      max-width: 520px;
+
+      font-size: 15px;
+      line-height: 1.9;
+      letter-spacing: 0.04em;
+
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    .gold-button {
+      min-width: 210px;
+
+      padding: 15px 25px;
+
+      border: 1px solid #fff0ab;
+      border-radius: 999px;
+
+      color: #4a0012;
+      background:
+        linear-gradient(
+          #fff5bd,
+          #e7bd51 54%,
+          #b67613
+        );
+
+      font-weight: bold;
+      font-size: 17px;
+      letter-spacing: 0.08em;
+
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.45),
+        0 0 20px rgba(255, 220, 107, 0.35);
+    }
+
+    .main-content {
+      width: min(100%, 980px);
+      margin: auto;
+      padding: 18px 15px 35px;
+    }
+
+    .section {
+      margin: 17px 0;
+      padding: 19px 16px;
+
+      border: 1px solid var(--line);
+      border-radius: 22px;
+
+      background: var(--panel);
+
+      box-shadow:
+        0 14px 35px rgba(0, 0, 0, 0.38),
+        inset 0 0 28px rgba(255, 218, 113, 0.05);
+
+      backdrop-filter: blur(8px);
+    }
+
+    .section-title {
+      margin: 0 0 16px;
+
+      color: var(--light-gold);
+      text-align: center;
+
+      font-size: 26px;
+      letter-spacing: 0.1em;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 11px;
+    }
+
+    .menu-button {
+      min-height: 105px;
+      padding: 14px 8px;
+
+      border: 1px solid var(--line);
+      border-radius: 17px;
+
+      color: var(--cream);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(112, 10, 46, 0.92),
+          rgba(35, 0, 13, 0.96)
+        );
+
+      box-shadow:
+        inset 0 0 20px rgba(255, 219, 117, 0.05),
+        0 8px 18px rgba(0, 0, 0, 0.3);
+    }
+
+    .menu-button:active {
+      transform: scale(0.97);
+    }
+
+    .menu-icon {
+      display: block;
+
+      margin-bottom: 6px;
+
+      font-size: 31px;
+    }
+
+    .menu-name {
+      display: block;
+
+      color: var(--light-gold);
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .menu-caption {
+      display: block;
+
+      margin-top: 5px;
+
+      color: #d7c4cb;
+      font-family: sans-serif;
+      font-size: 10px;
+    }
+
+    .genre-image-wrap {
+      position: relative;
+      overflow: hidden;
+
+      border: 1px solid var(--line);
+      border-radius: 18px;
+
+      background: #1c000a;
+    }
+
+    .genre-image {
+      display: block;
+      width: 100%;
+    }
+
+    .genre-note {
+      margin: 15px 0 0;
+
+      text-align: center;
+
+      font-size: 14px;
+      line-height: 1.9;
+      letter-spacing: 0.02em;
+
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    .hotspot {
+      position: absolute;
+
+      border: 0;
+      background: transparent;
+    }
+
+    .hotspot:active {
+      background: rgba(255, 229, 144, 0.12);
+    }
+
+    .genre-1 {
+      left: 2%;
+      top: 18%;
+      width: 18%;
+      height: 32%;
+    }
+
+    .genre-2 {
+      left: 21%;
+      top: 18%;
+      width: 18%;
+      height: 32%;
+    }
+
+    .genre-3 {
+      left: 40.5%;
+      top: 18%;
+      width: 18%;
+      height: 32%;
+    }
+
+    .genre-4 {
+      left: 60%;
+      top: 18%;
+      width: 18%;
+      height: 32%;
+    }
+
+    .genre-5 {
+      left: 79%;
+      top: 18%;
+      width: 18%;
+      height: 32%;
+    }
+
+    .genre-6 {
+      left: 2%;
+      top: 52%;
+      width: 18%;
+      height: 32%;
+    }
+
+    .genre-7 {
+      left: 21%;
+      top: 52%;
+      width: 18%;
+      height: 32%;
+    }
+
+    .genre-8 {
+      left: 40.5%;
+      top: 52%;
+      width: 18%;
+      height: 32%;
+    }
+
+    .genre-9 {
+      left: 60%;
+      top: 52%;
+      width: 18%;
+      height: 32%;
+    }
+
+    .genre-10 {
+      left: 79%;
+      top: 52%;
+      width: 18%;
+      height: 32%;
+    }
+
+    .performance-list {
+      display: grid;
+      gap: 11px;
+    }
+
+    .performance-card {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+
+      padding: 12px;
+
+      border: 1px solid rgba(255, 225, 145, 0.34);
+      border-radius: 15px;
+
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .performance-thumbnail {
+      width: 67px;
+      height: 86px;
+      flex-shrink: 0;
+
+      display: grid;
+      place-items: center;
+
+      border: 1px solid var(--line);
+      border-radius: 9px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #851638,
+          #26000e
+        );
+
+      font-size: 31px;
+    }
+
+    .performance-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .performance-info strong {
+      display: block;
+
+      color: var(--light-gold);
+      font-size: 16px;
+    }
+
+    .performance-info small {
+      display: block;
+
+      margin-top: 6px;
+
+      color: #d6c4ca;
+      font-family: sans-serif;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .play-button {
+      padding: 8px 12px;
+
+      border: 1px solid var(--line);
+      border-radius: 999px;
+
+      color: var(--light-gold);
+      background: transparent;
+
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 150;
+
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+
+      padding-bottom: env(safe-area-inset-bottom);
+
+      border-top: 1px solid var(--line);
+
+      background: rgba(51, 0, 18, 0.97);
+      backdrop-filter: blur(13px);
+    }
+
+    .nav-button {
+      min-height: 70px;
+
+      border: 0;
+
+      color: #cdbac1;
+      background: transparent;
+
+      font-size: 10px;
+    }
+
+    .nav-button.active {
+      color: var(--light-gold);
+      background:
+        linear-gradient(
+          rgba(255, 219, 108, 0.13),
+          transparent
+        );
+    }
+
+    .nav-icon {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 22px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      background: rgba(0, 0, 0, 0.78);
+    }
+
+    .modal.visible {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(100%, 480px);
+      max-height: 85vh;
+      overflow-y: auto;
+
+      padding: 22px;
+
+      border: 1px solid var(--line);
+      border-radius: 22px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #51001d,
+          #21000c
+        );
+
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-close {
+      float: right;
+
+      width: 38px;
+      height: 38px;
+
+      border: 1px solid var(--line);
+      border-radius: 50%;
+
+      color: white;
+      background: transparent;
+
+      font-size: 19px;
+    }
+
+    .modal-title {
+      margin-top: 0;
+      color: var(--light-gold);
+    }
+
+    .modal-text {
+      line-height: 1.9;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    @media (min-width: 720px) {
+      .menu-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .hero {
+        min-height: 82vh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="top-bar">
+
+    <button
+      class="back-button"
+      onclick="location.href='index.html'"
+      aria-label="入口へ戻る"
+    >
+      ‹
+    </button>
+
+    <div class="top-title">
+      劇場ロビー
+    </div>
+
+    <button
+      class="top-icon"
+      onclick="openModal('notice')"
+      aria-label="お知らせ"
+    >
+      🔔
+    </button>
+
+  </header>
+
+
+  <section class="hero">
+
+    <span
+      class="floating-light"
+      style="left: 12%; bottom: 12%; animation-delay: 0s;"
+    ></span>
+
+    <span
+      class="floating-light"
+      style="left: 30%; bottom: 5%; animation-delay: 1.2s;"
+    ></span>
+
+    <span
+      class="floating-light"
+      style="left: 54%; bottom: 15%; animation-delay: 2.1s;"
+    ></span>
+
+    <span
+      class="floating-light"
+      style="left: 78%; bottom: 6%; animation-delay: 0.8s;"
+    ></span>
+
+    <span
+      class="floating-light"
+      style="left: 91%; bottom: 20%; animation-delay: 3s;"
+    ></span>
+
+
+    <div class="welcome-panel">
+
+      <p class="welcome-small">
+        KOIBAKO THEATRE
+      </p>
+
+      <h1 class="welcome-title">
+        おかえりなさい
+      </h1>
+
+      <p class="welcome-text">
+        シャンデリアが輝く大階段の先で、<br>
+        今日も新しい物語が幕を開けます。
+      </p>
+
+      <button
+        class="gold-button"
+        onclick="scrollToPerformances()"
+      >
+        本日の演目を見る
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <main class="main-content">
+
+    <section class="section">
+
+      <h2 class="section-title">
+        劇場案内
+      </h2>
+
+      <div class="menu-grid">
+
+        <button
+          class="menu-button"
+          onclick="scrollToPerformances()"
+        >
+          <span class="menu-icon">📖</span>
+          <span class="menu-name">本日の演目</span>
+          <span class="menu-caption">作品を選ぶ</span>
+        </button>
+
+        <button
+          class="menu-button"
+          onclick="openModal('gacha')"
+        >
+          <span class="menu-icon">🎭</span>
+          <span class="menu-name">劇場くじ</span>
+          <span class="menu-caption">限定グッズを獲得</span>
+        </button>
+
+        <button
+          class="menu-button"
+          onclick="openModal('shop')"
+        >
+          <span class="menu-icon">🪵</span>
+          <span class="menu-name">劇場売店</span>
+          <span class="menu-caption">木札・来場券</span>
+        </button>
+
+        <button
+          class="menu-button"
+          onclick="openModal('vip')"
+        >
+          <span class="menu-icon">📕</span>
+          <span class="menu-name">VIP席</span>
+          <span class="menu-caption">特別公演パンフレット</span>
+        </button>
+
+        <button
+          class="menu-button"
+          onclick="openModal('fanclub')"
+        >
+          <span class="menu-icon">🌹</span>
+          <span class="menu-name">ファンクラブ</span>
+          <span class="menu-caption">好きな劇団を応援</span>
+        </button>
+
+        <button
+          class="menu-button"
+          onclick="openModal('collection')"
+        >
+          <span class="menu-icon">📸</span>
+          <span class="menu-name">思い出展示室</span>
+          <span class="menu-caption">チェキ・リボン</span>
+        </button>
+
+        <button
+          class="menu-button"
+          onclick="openModal('gift')"
+        >
+          <span class="menu-icon">🎁</span>
+          <span class="menu-name">来場特典</span>
+          <span class="menu-caption">毎日のプレゼント</span>
+        </button>
+
+        <button
+          class="menu-button"
+          onclick="openModal('news')"
+        >
+          <span class="menu-icon">🔔</span>
+          <span class="menu-name">劇場便り</span>
+          <span class="menu-caption">最新のお知らせ</span>
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <section
+      class="section"
+      id="performances"
+    >
+
+      <h2 class="section-title">
+        本日の演目
+      </h2>
+
+      <div class="genre-image-wrap">
+
+        <img
+          class="genre-image"
+          src="file_000000001dfc81faa94b0f333e4b01fe.png"
+          alt="ジャンル一覧"
+        >
+
+        <button
+          class="hotspot genre-1"
+          onclick="selectGenre('恋')"
+          aria-label="恋"
+        ></button>
+
+        <button
+          class="hotspot genre-2"
+          onclick="selectGenre('夢')"
+          aria-label="夢"
+        ></button>
+
+        <button
+          class="hotspot genre-3"
+          onclick="selectGenre('希望')"
+          aria-label="希望"
+        ></button>
+
+        <button
+          class="hotspot genre-4"
+          onclick="selectGenre('癒やし')"
+          aria-label="癒やし"
+        ></button>
+
+        <button
+          class="hotspot genre-5"
+          onclick="selectGenre('ホラー')"
+          aria-label="ホラー"
+        ></button>
+
+        <button
+          class="hotspot genre-6"
+          onclick="selectGenre('ミステリー')"
+          aria-label="ミステリー"
+        ></button>
+
+        <button
+          class="hotspot genre-7"
+          onclick="selectGenre('女性向け')"
+          aria-label="女性向け"
+        ></button>
+
+        <button
+          class="hotspot genre-8"
+          onclick="selectGenre('男性向け')"
+          aria-label="男性向け"
+        ></button>
+
+        <button
+          class="hotspot genre-9"
+          onclick="selectGenre('その他')"
+          aria-label="その他"
+        ></button>
+
+        <button
+          class="hotspot genre-10"
+          onclick="selectGenre('新作・特集')"
+          aria-label="新作・特集"
+        ></button>
+
+      </div>
+
+      <p class="genre-note">
+        ジャンルカードを押すと、<br>
+        選んだ演目の一覧が表示されます。
+      </p>
+
+    </section>
+
+
+    <section
+      class="section"
+      id="genreResults"
+    >
+
+      <h2
+        class="section-title"
+        id="selectedGenreTitle"
+      >
+        おすすめ作品
+      </h2>
+
+      <div
+        class="performance-list"
+        id="performanceList"
+      >
+
+        <article class="performance-card">
+
+          <div class="performance-thumbnail">
+            🎭
+          </div>
+
+          <div class="performance-info">
+
+            <strong>
+              夢を歌う君へ
+            </strong>
+
+            <small>
+              舞台俳優と夢を追いかける恋物語
+            </small>
+
+          </div>
+
+          <button
+            class="play-button"
+            onclick="openWork('夢を歌う君へ')"
+          >
+            開く
+          </button>
+
+        </article>
+
+
+        <article class="performance-card">
+
+          <div class="performance-thumbnail">
+            🦇
+          </div>
+
+          <div class="performance-info">
+
+            <strong>
+              真夜中の契約
+            </strong>
+
+            <small>
+              吸血鬼と交わした秘密の約束
+            </small>
+
+          </div>
+
+          <button
+            class="play-button"
+            onclick="openWork('真夜中の契約')"
+          >
+            開く
+          </button>
+
+        </article>
+
+
+        <article class="performance-card">
+
+          <div class="performance-thumbnail">
+            🌙
+          </div>
+
+          <div class="performance-info">
+
+            <strong>
+              眠れない夜の特等席
+            </strong>
+
+            <small>
+              優しい声があなたの心に寄り添う
+            </small>
+
+          </div>
+
+          <button
+            class="play-button"
+            onclick="openWork('眠れない夜の特等席')"
+          >
+            開く
+          </button>
+
+        </article>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <nav class="bottom-nav">
+
+    <button
+      class="nav-button active"
+      onclick="location.href='lobby.html'"
+    >
+      <span class="nav-icon">🏛️</span>
+      ホーム
+    </button>
+
+    <button
+      class="nav-button"
+      onclick="openModal('works')"
+    >
+      <span class="nav-icon">📖</span>
+      作品一覧
+    </button>
+
+    <button
+      class="nav-button"
+      onclick="openModal('create')"
+    >
+      <span class="nav-icon">✍️</span>
+      作品を作る
+    </button>
+
+    <button
+      class="nav-button"
+      onclick="openModal('mypage')"
+    >
+      <span class="nav-icon">🌹</span>
+      マイページ
+    </button>
+
+    <button
+      class="nav-button"
+      onclick="openModal('settings')"
+    >
+      <span class="nav-icon">⚙️</span>
+      設定
+    </button>
+
+  </nav>
+
+
+  <div
+    class="modal"
+    id="modal"
+  >
+
+    <div class="modal-box">
+
+      <button
+        class="modal-close"
+        onclick="closeModal()"
+      >
+        ×
+      </button>
+
+      <div id="modalContent"></div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const modal =
+      document.getElementById("modal");
+
+    const modalContent =
+      document.getElementById("modalContent");
+
+
+    function scrollToPerformances() {
+
+      document
+        .getElementById("performances")
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+    }
+
+
+    function openModal(type) {
+
+      const contents = {
+
+        notice: `
+          <h2 class="modal-title">🔔 劇場からのお知らせ</h2>
+
+          <p class="modal-text">
+            恋ばこ劇場ロビーへようこそ。<br>
+            現在は、各機能を順番に準備しています。
+          </p>
+        `,
+
+        gacha: `
+          <h2 class="modal-title">🎭 劇場くじ</h2>
+
+          <p class="modal-text">
+            白い来場券を使って、限定チェキや
+            リボンストラップを獲得できます。
+          </p>
+
+          <button
+            class="gold-button"
+            onclick="drawGacha()"
+          >
+            くじを引く
+          </button>
+
+          <div id="gachaResult"></div>
+        `,
+
+        shop: `
+          <h2 class="modal-title">🪵 劇場売店</h2>
+
+          <p class="modal-text">
+            木札や白い来場券を利用できます。
+          </p>
+
+          <p class="modal-text">
+            🪵 100木札<br>
+            🎫 白い来場券<br>
+            🎀 記念リボン
+          </p>
+        `,
+
+        vip: `
+          <h2 class="modal-title">📕 VIP席</h2>
+
+          <p class="modal-text">
+            特別公演パンフレットを持つお客様だけの席です。
+          </p>
+
+          <p class="modal-text">
+            ・広告なし<br>
+            ・先行公開<br>
+            ・限定チェキ<br>
+            ・限定アナウンス
+          </p>
+
+          <button class="gold-button">
+            VIP席を見る
+          </button>
+        `,
+
+        fanclub: `
+          <h2 class="modal-title">🌹 ファンクラブ</h2>
+
+          <p class="modal-text">
+            好きな作品やクリエイターの
+            ファンクラブへ入会できます。
+          </p>
+        `,
+
+        collection: `
+          <h2 class="modal-title">📸 思い出展示室</h2>
+
+          <p class="modal-text">
+            プレイ中に獲得した画像を
+            チェキ風に保存できます。
+          </p>
+
+          <p class="modal-text">
+            📸 チェキ<br>
+            🎀 リボンストラップ<br>
+            🧸 アクリルスタンド<br>
+            💡 ペンライト
+          </p>
+        `,
+
+        gift: `
+          <h2 class="modal-title">🎁 本日の来場特典</h2>
+
+          <p class="modal-text">
+            白い来場券 × 1<br>
+            木札 × 10
+          </p>
+
+          <button
+            class="gold-button"
+            onclick="receiveGift()"
+          >
+            受け取る
+          </button>
+        `,
+
+        news: `
+          <h2 class="modal-title">🔔 劇場便り</h2>
+
+          <p class="modal-text">
+            新しい演目やイベント情報を
+            こちらに掲載します。
+          </p>
+        `,
+
+        works: `
+          <h2 class="modal-title">📖 作品一覧</h2>
+
+          <p class="modal-text">
+            次は works.html を作成して、
+            作品一覧ページへつなげます。
+          </p>
+        `,
+
+        create: `
+          <h2 class="modal-title">✍️ 作品を作る</h2>
+
+          <p class="modal-text">
+            次は create.html を作成して、
+            キャラクター投稿画面へつなげます。
+          </p>
+        `,
+
+        mypage: `
+          <h2 class="modal-title">🌹 マイページ</h2>
+
+          <p class="modal-text">
+            次は mypage.html を作成して、
+            ファンクラブやコレクションを表示します。
+          </p>
+        `,
+
+        settings: `
+          <h2 class="modal-title">⚙️ 設定</h2>
+
+          <p class="modal-text">
+            音量、通知、表示方法などを設定する画面です。
+          </p>
+        `
+
+      };
+
+
+      modalContent.innerHTML =
+        contents[type] || `
+          <h2 class="modal-title">準備中</h2>
+        `;
+
+      modal.classList.add("visible");
+
+    }
+
+
+    function closeModal() {
+
+      modal.classList.remove("visible");
+
+    }
+
+
+    modal.addEventListener(
+      "click",
+      function(event) {
+
+        if (event.target === modal) {
+
+          closeModal();
+
+        }
+
+      }
+    );
+
+
+    function drawGacha() {
+
+      const prizes = [
+        "通常チェキ",
+        "限定チェキ",
+        "記念リボン",
+        "アクリルスタンド",
+        "ペンライト",
+        "VIP招待状"
+      ];
+
+      const result =
+        prizes[
+          Math.floor(
+            Math.random() * prizes.length
+          )
+        ];
+
+      document
+        .getElementById("gachaResult")
+        .innerHTML = `
+          <p class="modal-text">
+            ✨ ${result}を獲得しました！
+          </p>
+        `;
+
+    }
+
+
+    function receiveGift() {
+
+      alert(
+        "白い来場券と木札を受け取りました！"
+      );
+
+      closeModal();
+
+    }
+
+
+    function selectGenre(genre) {
+
+      const title =
+        document.getElementById(
+          "selectedGenreTitle"
+        );
+
+      const list =
+        document.getElementById(
+          "performanceList"
+        );
+
+      title.textContent =
+        genre + "の演目";
+
+
+      list.innerHTML = `
+
+        <article class="performance-card">
+
+          <div class="performance-thumbnail">
+            🎭
+          </div>
+
+          <div class="performance-info">
+
+            <strong>
+              ${genre}の新作公演
+            </strong>
+
+            <small>
+              ${genre}をテーマにした試作作品です。
+            </small>
+
+          </div>
+
+          <button
+            class="play-button"
+            onclick="openWork('${genre}の新作公演')"
+          >
+            開く
+          </button>
+
+        </article>
+
+
+        <article class="performance-card">
+
+          <div class="performance-thumbnail">
+            🌹
+          </div>
+
+          <div class="performance-info">
+
+            <strong>
+              ${genre}の特別公演
+            </strong>
+
+            <small>
+              あなたとキャラクターだけの物語。
+            </small>
+
+          </div>
+
+          <button
+            class="play-button"
+            onclick="openWork('${genre}の特別公演')"
+          >
+            開く
+          </button>
+
+        </article>
+
+      `;
+
+
+      document
+        .getElementById("genreResults")
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+    }
+
+
+    function openWork(title) {
+
+      modalContent.innerHTML = `
+
+        <h2 class="modal-title">
+          ${title}
+        </h2>
+
+        <p class="modal-text">
+          作品ページは次の工程で作成します。
+        </p>
+
+        <button class="gold-button">
+          物語を始める
+        </button>
+
+      `;
+
+      modal.classList.add("visible");
+
+    }
+
+  </script>
+
+</body>
+</html>
