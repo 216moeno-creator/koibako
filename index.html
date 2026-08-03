@@ -1,1205 +1,796 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#3a0014">
-
-  <title>恋ばこ</title>
-
-  <!-- 今アップした恋ばこ画像をアイコンに使用 -->
-  <link rel="icon" href="file_000000006e8882119118b07309fcc222.png">
-  <link rel="apple-touch-icon" href="file_000000006e8882119118b07309fcc222.png">
-
-  <style>
-    :root {
-      --wine: #3a0014;
-      --wine-light: #650025;
-      --curtain: #9d001e;
-      --curtain-dark: #590014;
-      --gold: #e8c56b;
-      --gold-light: #fff0a8;
-      --cream: #fff8e8;
-      --glass-blue: #4db5e8;
-      --glass-pink: #ec75ad;
-      --glass-purple: #8652c7;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      overflow-x: hidden;
-      background: var(--wine);
-      color: var(--cream);
-      font-family:
-        "Yu Mincho",
-        "Hiragino Mincho ProN",
-        "Noto Serif JP",
-        serif;
-    }
-
-    button {
-      font: inherit;
-    }
-
-    /* =========================
-       開幕画面
-    ========================= */
-
-    #opening {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 50% 42%, #7d1536 0%, #460018 48%, #210009 100%);
-      transition: opacity 0.8s ease, visibility 0.8s ease;
-    }
-
-    #opening.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .opening-frame {
-      width: min(88vw, 520px);
-      padding: 44px 24px;
-      text-align: center;
-      border: 2px solid var(--gold);
-      border-radius: 24px;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.01));
-      box-shadow:
-        0 0 0 7px rgba(232,197,107,.08),
-        0 25px 70px rgba(0,0,0,.5),
-        inset 0 0 30px rgba(255,224,132,.05);
-    }
-
-    .opening-ornament {
-      color: var(--gold);
-      font-size: 28px;
-      letter-spacing: 10px;
-      margin-bottom: 8px;
-    }
-
-    .logo {
-      margin: 0;
-      font-size: clamp(50px, 15vw, 84px);
-      letter-spacing: .08em;
-      line-height: 1.25;
-      color: transparent;
-      background:
-        linear-gradient(
-          180deg,
-          #fff7c9 0%,
-          #efcc6e 34%,
-          #b77b20 66%,
-          #ffe9a0 100%
-        );
-      -webkit-background-clip: text;
-      background-clip: text;
-      filter: drop-shadow(0 3px 1px #5e2e00);
-    }
-
-    .opening-copy {
-      margin: 12px 0 0;
-      color: #fff5e5;
-      font-size: clamp(16px, 4.5vw, 21px);
-      letter-spacing: .12em;
-    }
-
-    .enter-button {
-      margin-top: 35px;
-      min-width: 180px;
-      padding: 16px 34px;
-      border: 1px solid #fff1ab;
-      border-radius: 999px;
-      color: #3a0014;
-      background:
-        linear-gradient(180deg, #fff1ad, #d4a541 58%, #f2d476);
-      box-shadow:
-        0 8px 22px rgba(0,0,0,.35),
-        inset 0 1px 1px #fffbd7;
-      font-size: 20px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform .2s ease, filter .2s ease;
-    }
-
-    .enter-button:active {
-      transform: scale(.96);
-    }
-
-    /* =========================
-       カーテン
-    ========================= */
-
-    #curtainLayer {
-      position: fixed;
-      inset: 0;
-      z-index: 90;
-      pointer-events: none;
-      visibility: hidden;
-    }
-
-    #curtainLayer.active {
-      visibility: visible;
-    }
-
-    .curtain {
-      position: absolute;
-      top: 0;
-      width: 51%;
-      height: 100%;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          #570013 0,
-          #a80025 9%,
-          #d01b38 17%,
-          #830018 27%,
-          #4d000e 36%
-        );
-      box-shadow: inset 0 0 50px rgba(0,0,0,.48);
-      transition: transform 1.45s cubic-bezier(.63,.01,.25,1);
-    }
-
-    .curtain::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.16), transparent 22%, rgba(0,0,0,.26));
-    }
-
-    .curtain-left {
-      left: 0;
-      border-right: 4px solid #e4b84f;
-    }
-
-    .curtain-right {
-      right: 0;
-      border-left: 4px solid #e4b84f;
-    }
-
-    #curtainLayer.open .curtain-left {
-      transform: translateX(-97%);
-    }
-
-    #curtainLayer.open .curtain-right {
-      transform: translateX(97%);
-    }
-
-    .curtain-top {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 12%;
-      z-index: 3;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          #560011 0,
-          #b00026 8%,
-          #6b0017 16%
-        );
-      border-bottom: 5px solid #d9aa3a;
-      border-radius: 0 0 45% 45%;
-      box-shadow: 0 8px 25px rgba(0,0,0,.4);
-    }
-
-    /* =========================
-       劇場ロビー
-    ========================= */
-
-    #app {
-      min-height: 100vh;
-      display: none;
-      background:
-        radial-gradient(circle at 50% 10%, rgba(255,228,150,.18), transparent 25%),
-        linear-gradient(180deg, #241036 0%, #3f1948 44%, #1a081c 100%);
-    }
-
-    #app.visible {
-      display: block;
-    }
-
-    .lobby {
-      position: relative;
-      min-height: 100vh;
-      overflow: hidden;
-      padding: 22px 16px 110px;
-      transition: filter 1s ease, background 1s ease;
-    }
-
-    .lobby::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      background:
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px);
-      background-size: 44px 44px;
-      pointer-events: none;
-    }
-
-    .time-morning {
-      background:
-        linear-gradient(180deg, rgba(255,220,170,.18), rgba(85,30,85,.12));
-    }
-
-    .time-evening {
-      background:
-        linear-gradient(180deg, rgba(255,116,95,.16), rgba(65,17,63,.2));
-    }
-
-    .time-night {
-      background:
-        linear-gradient(180deg, rgba(15,20,70,.32), rgba(24,5,31,.3));
-    }
-
-    .lobby-content {
-      position: relative;
-      z-index: 2;
-      width: min(100%, 1100px);
-      margin: 0 auto;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .mini-logo {
-      font-size: 25px;
-      font-weight: 700;
-      color: var(--gold-light);
-      text-shadow: 0 2px 2px #4a2300;
-      letter-spacing: .08em;
-    }
-
-    .time-label {
-      padding: 8px 13px;
-      border: 1px solid rgba(255,231,161,.45);
-      border-radius: 999px;
-      background: rgba(35,0,30,.45);
-      color: #ffeab3;
-      font-size: 13px;
-      backdrop-filter: blur(8px);
-    }
-
-    /* シャンデリア */
-
-    .chandelier-area {
-      position: relative;
-      height: 145px;
-      margin-top: -8px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .chain {
-      width: 4px;
-      height: 43px;
-      background: linear-gradient(#c89732, #fff1a6, #8b5c14);
-    }
-
-    .chandelier {
-      position: absolute;
-      top: 40px;
-      width: 200px;
-      height: 95px;
-      filter: drop-shadow(0 0 12px rgba(255,222,122,.85));
-      animation: chandelierGlow 3s ease-in-out infinite;
-    }
-
-    .chandelier-center {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      width: 20px;
-      height: 66px;
-      transform: translateX(-50%);
-      border-radius: 50%;
-      background: linear-gradient(90deg, #9f6a16, #fff0a6, #a56f18);
-    }
-
-    .arm {
-      position: absolute;
-      top: 28px;
-      width: 76px;
-      height: 38px;
-      border-bottom: 5px solid #deb64f;
-      border-radius: 0 0 50% 50%;
-    }
-
-    .arm.left {
-      right: 50%;
-    }
-
-    .arm.right {
-      left: 50%;
-    }
-
-    .lamp {
-      position: absolute;
-      width: 13px;
-      height: 25px;
-      border-radius: 50% 50% 40% 40%;
-      background:
-        radial-gradient(circle at 50% 28%, white 0 14%, #fff0a5 38%, #d89c24 78%);
-      box-shadow: 0 0 20px #ffe79a;
-    }
-
-    .lamp.l1 { left: 10px; top: 42px; }
-    .lamp.l2 { left: 52px; top: 61px; }
-    .lamp.l3 { right: 52px; top: 61px; }
-    .lamp.l4 { right: 10px; top: 42px; }
-    .lamp.l5 { left: 93px; top: 72px; }
-
-    @keyframes chandelierGlow {
-      0%, 100% { filter: drop-shadow(0 0 10px rgba(255,220,120,.65)); }
-      50% { filter: drop-shadow(0 0 22px rgba(255,235,155,1)); }
-    }
-
-    /* ステンドグラス */
-
-    .theater-scene {
-      position: relative;
-      min-height: 360px;
-      margin-top: -15px;
-      overflow: hidden;
-      border: 2px solid rgba(239,198,96,.75);
-      border-radius: 28px 28px 14px 14px;
-      background:
-        linear-gradient(180deg, rgba(34,14,54,.82), rgba(56,19,54,.95));
-      box-shadow:
-        0 24px 60px rgba(0,0,0,.42),
-        inset 0 0 45px rgba(255,213,112,.09);
-    }
-
-    .stained-glass {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      width: min(54vw, 280px);
-      height: 235px;
-      transform: translateX(-50%);
-      overflow: hidden;
-      border: 9px solid #d4ad56;
-      border-radius: 50% 50% 12px 12px;
-      background:
-        conic-gradient(
-          from 0deg,
-          #f36ca0,
-          #8c62d4,
-          #4fb8e9,
-          #f7cc58,
-          #e9677e,
-          #8262ce,
-          #56bfe8,
-          #f36ca0
-        );
-      box-shadow:
-        0 0 32px rgba(150,110,255,.55),
-        inset 0 0 25px rgba(255,255,255,.45);
-    }
-
-    .stained-glass::before,
-    .stained-glass::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(90deg, transparent 47%, #c79d49 48% 52%, transparent 53%),
-        linear-gradient(transparent 47%, #c79d49 48% 52%, transparent 53%);
-    }
-
-    .stained-glass::after {
-      transform: rotate(45deg) scale(1.5);
-    }
-
-    /* 階段 */
-
-    .stairs {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      width: 92%;
-      height: 215px;
-      transform: translateX(-50%);
-    }
-
-    .stair-left,
-    .stair-right {
-      position: absolute;
-      bottom: 0;
-      width: 46%;
-      height: 100%;
-      background:
-        repeating-linear-gradient(
-          180deg,
-          #eedaa8 0 14px,
-          #b7934e 15px 18px
-        );
-      border-top: 3px solid #ffe7a6;
-      box-shadow: 0 -8px 20px rgba(255,232,172,.1);
-    }
-
-    .stair-left {
-      left: 0;
-      clip-path: polygon(0 100%, 0 55%, 100% 0, 100% 100%);
-    }
-
-    .stair-right {
-      right: 0;
-      clip-path: polygon(0 0, 100% 55%, 100% 100%, 0 100%);
-    }
-
-    .red-carpet {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      width: 34%;
-      height: 160px;
-      transform: translateX(-50%);
-      background:
-        linear-gradient(90deg, #52000e, #b71232 30%, #ce2440 50%, #b71232 70%, #52000e);
-      clip-path: polygon(32% 0, 68% 0, 100% 100%, 0 100%);
-      box-shadow: 0 0 20px rgba(178,0,43,.45);
-    }
-
-    .rail {
-      position: absolute;
-      bottom: 25px;
-      width: 43%;
-      height: 150px;
-      border-top: 5px solid #e7bd55;
-    }
-
-    .rail.left {
-      left: 2%;
-      transform: rotate(-26deg);
-      transform-origin: left bottom;
-    }
-
-    .rail.right {
-      right: 2%;
-      transform: rotate(26deg);
-      transform-origin: right bottom;
-    }
-
-    .welcome {
-      position: relative;
-      z-index: 4;
-      padding-top: 245px;
-      text-align: center;
-      text-shadow: 0 2px 5px rgba(0,0,0,.9);
-    }
-
-    .welcome h1 {
-      margin: 0;
-      color: #ffe8a2;
-      font-size: clamp(28px, 7vw, 48px);
-    }
-
-    .welcome p {
-      margin: 9px 16px 0;
-      font-size: 15px;
-      line-height: 1.8;
-    }
-
-    /* 演目カード */
-
-    .section {
-      margin-top: 28px;
-    }
-
-    .section-title {
-      margin: 0 0 15px;
-      color: var(--gold-light);
-      font-size: 25px;
-      text-align: center;
-      letter-spacing: .08em;
-    }
-
-    .section-subtitle {
-      margin: -6px 0 17px;
-      color: #e7d3dc;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 13px;
-    }
-
-    .show-card {
-      position: relative;
-      min-height: 140px;
-      padding: 18px 12px;
-      overflow: hidden;
-      border: 1px solid rgba(255,225,142,.55);
-      border-radius: 17px;
-      text-align: center;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(255,222,132,.17), transparent 42%),
-        linear-gradient(145deg, rgba(101,0,37,.86), rgba(31,7,38,.94));
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.3),
-        inset 0 0 18px rgba(255,218,128,.05);
-    }
-
-    .show-card .icon {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 33px;
-    }
-
-    .show-card strong {
-      display: block;
-      color: #ffe6a0;
-      font-size: 17px;
-    }
-
-    .show-card small {
-      display: block;
-      margin-top: 7px;
-      color: #e2ced7;
-    }
-
-    .coming {
-      display: inline-block;
-      margin-top: 11px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      color: #f9df9a;
-      background: rgba(0,0,0,.24);
-      font-size: 11px;
-      letter-spacing: .08em;
-    }
-
-    /* 今日の言葉 */
-
-    .message-box {
-      margin-top: 25px;
-      padding: 22px 18px;
-      border: 1px solid rgba(255,226,146,.55);
-      border-radius: 18px;
-      text-align: center;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.065), rgba(255,255,255,.02));
-      box-shadow: inset 0 0 22px rgba(255,214,112,.04);
-    }
-
-    .message-box h3 {
-      margin: 0 0 10px;
-      color: #ffe6a0;
-    }
-
-    .message-box p {
-      margin: 0;
-      line-height: 1.9;
-      color: #fff7ed;
-    }
-
-    /* ページ */
-
-    .page {
-      display: none;
-      animation: fadeIn .35s ease;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .simple-page {
-      padding: 28px 0 40px;
-    }
-
-    .page-heading {
-      text-align: center;
-    }
-
-    .page-heading h2 {
-      margin: 0;
-      color: #ffe7a0;
-      font-size: 30px;
-    }
-
-    .page-heading p {
-      color: #dbcbd3;
-      line-height: 1.7;
-    }
-
-    .panel {
-      margin-top: 20px;
-      padding: 19px;
-      border: 1px solid rgba(255,225,142,.4);
-      border-radius: 17px;
-      background: rgba(22,4,27,.62);
-    }
-
-    .panel h3 {
-      margin-top: 0;
-      color: #ffe5a0;
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      color: #f5e3eb;
-      font-size: 14px;
-    }
-
-    input,
-    textarea,
-    select {
-      width: 100%;
-      margin-top: 7px;
-      padding: 13px;
-      border: 1px solid rgba(232,197,107,.45);
-      border-radius: 11px;
-      outline: none;
-      color: white;
-      background: rgba(255,255,255,.08);
-      font: inherit;
-    }
-
-    textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-
-    .gold-button {
-      width: 100%;
-      margin-top: 20px;
-      padding: 14px;
-      border: 0;
-      border-radius: 999px;
-      color: #3a0014;
-      background: linear-gradient(#ffe9a2, #c79735);
-      font-weight: 700;
-    }
-
-    /* 下部ナビ */
-
-    .bottom-nav {
-      position: fixed;
-      left: 50%;
-      bottom: 0;
-      z-index: 20;
-      width: min(100%, 1100px);
-      transform: translateX(-50%);
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      border-top: 1px solid rgba(255,224,141,.45);
-      background: rgba(31,1,26,.93);
-      backdrop-filter: blur(15px);
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    .nav-button {
-      min-height: 71px;
-      border: 0;
-      color: #bea9b2;
-      background: transparent;
-      font-size: 11px;
-      cursor: pointer;
-    }
-
-    .nav-button span {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 23px;
-    }
-
-    .nav-button.active {
-      color: #ffe59a;
-      background:
-        linear-gradient(180deg, rgba(255,220,117,.12), transparent);
-    }
-
-    /* PC */
-
-    @media (min-width: 760px) {
-      .lobby {
-        padding-left: 34px;
-        padding-right: 34px;
-      }
-
-      .cards {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-
-      .theater-scene {
-        min-height: 440px;
-      }
-
-      .stained-glass {
-        width: 340px;
-        height: 290px;
-      }
-
-      .welcome {
-        padding-top: 315px;
-      }
-
-      .stairs {
-        height: 270px;
-      }
-
-      .red-carpet {
-        height: 210px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#3b0016">
+
+<title>恋ばこ</title>
+
+<link rel="icon" href="file_000000006e8882119118b07309fcc222.png">
+<link rel="apple-touch-icon" href="file_000000006e8882119118b07309fcc222.png">
+
+<style>
+:root{
+  --wine:#3b0016;
+  --red:#a90028;
+  --gold:#e8c262;
+  --light-gold:#fff1ad;
+  --cream:#fff8e8;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  overflow-x:hidden;
+  background:var(--wine);
+  color:var(--cream);
+  font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+
+button{
+  font:inherit;
+}
+
+/* 開幕画面 */
+#opening{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:
+    radial-gradient(circle at 50% 38%,#7c1539 0%,#430017 46%,#1c0009 100%);
+  transition:opacity .8s,visibility .8s;
+}
+
+#opening.hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.opening-card{
+  width:min(90vw,520px);
+  padding:48px 22px;
+  text-align:center;
+  border:2px solid var(--gold);
+  border-radius:28px;
+  background:rgba(255,255,255,.035);
+  box-shadow:
+    0 0 0 7px rgba(232,194,98,.08),
+    0 25px 70px rgba(0,0,0,.55),
+    inset 0 0 35px rgba(255,226,135,.06);
+}
+
+.ornament{
+  color:var(--gold);
+  font-size:25px;
+  letter-spacing:10px;
+}
+
+.logo{
+  margin:12px 0 8px;
+  font-size:clamp(55px,16vw,90px);
+  letter-spacing:.08em;
+  line-height:1.2;
+  color:transparent;
+  background:linear-gradient(
+    180deg,
+    #fffbd1 0%,
+    #edc75f 35%,
+    #a96e16 68%,
+    #ffe99a 100%
+  );
+  -webkit-background-clip:text;
+  background-clip:text;
+  filter:drop-shadow(0 3px 1px #4e2300);
+}
+
+.catch{
+  margin:0;
+  color:#fff5e6;
+  font-size:clamp(16px,4.5vw,21px);
+  letter-spacing:.1em;
+}
+
+#enterButton{
+  position:relative;
+  margin-top:38px;
+  min-width:190px;
+  padding:17px 38px;
+  overflow:hidden;
+  border:1px solid #fff2af;
+  border-radius:999px;
+  color:#3b0016;
+  background:linear-gradient(#fff3b6,#d5a83d 62%,#f2d77f);
+  box-shadow:
+    0 9px 24px rgba(0,0,0,.38),
+    inset 0 1px 2px #fffce1,
+    0 0 15px rgba(255,225,128,.35);
+  font-size:21px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:transform .2s,box-shadow .25s;
+}
+
+#enterButton::before{
+  content:"";
+  position:absolute;
+  top:-70%;
+  left:-45%;
+  width:35%;
+  height:240%;
+  transform:rotate(25deg);
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.95),
+    transparent
+  );
+  animation:buttonShine 2.8s infinite;
+}
+
+#enterButton:active{
+  transform:scale(.95);
+  box-shadow:0 0 35px rgba(255,236,153,.95);
+}
+
+#enterButton.clicked{
+  animation:buttonFlash .65s ease;
+}
+
+@keyframes buttonShine{
+  0%{left:-55%}
+  55%,100%{left:125%}
+}
+
+@keyframes buttonFlash{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.09);filter:brightness(1.7)}
+  100%{transform:scale(1)}
+}
+
+/* カーテン */
+#curtainLayer{
+  position:fixed;
+  inset:0;
+  z-index:90;
+  visibility:hidden;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+#curtainLayer.show{
+  visibility:visible;
+}
+
+.curtain{
+  position:absolute;
+  top:0;
+  width:51%;
+  height:100%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #4b000e 0,
+      #9c0024 8%,
+      #d51d3e 16%,
+      #80001c 27%,
+      #3f000b 38%
+    );
+  box-shadow:inset 0 0 60px rgba(0,0,0,.55);
+  transition:transform 1.8s cubic-bezier(.65,.01,.22,1);
+}
+
+.curtain::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.18),
+    transparent 24%,
+    rgba(0,0,0,.28)
+  );
+}
+
+.curtain-left{
+  left:0;
+  border-right:4px solid #e4b84f;
+}
+
+.curtain-right{
+  right:0;
+  border-left:4px solid #e4b84f;
+}
+
+#curtainLayer.open .curtain-left{
+  transform:translateX(-98%);
+}
+
+#curtainLayer.open .curtain-right{
+  transform:translateX(98%);
+}
+
+.curtain-top{
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:4;
+  width:100%;
+  height:12%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #4b000e 0,
+      #ae0028 8%,
+      #630016 17%
+    );
+  border-bottom:5px solid #d8a83d;
+  border-radius:0 0 48% 48%;
+  box-shadow:0 10px 26px rgba(0,0,0,.45);
+}
+
+/* キラキラ */
+#sparkles{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  overflow:hidden;
+}
+
+.sparkle{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#fff5b5;
+  box-shadow:
+    0 0 8px #fff,
+    0 0 18px #ffd75e,
+    0 0 28px #fff0a0;
+  opacity:0;
+  animation:sparkleMove 1.5s ease-out forwards;
+}
+
+@keyframes sparkleMove{
+  0%{
+    opacity:0;
+    transform:translateY(15px) scale(.2) rotate(0);
+  }
+  25%{opacity:1}
+  100%{
+    opacity:0;
+    transform:translateY(-100px) scale(1.8) rotate(180deg);
+  }
+}
+
+/* ロビー */
+#app{
+  display:none;
+  min-height:100vh;
+}
+
+#app.show{
+  display:block;
+}
+
+.lobby{
+  position:relative;
+  min-height:100vh;
+  padding:20px 15px 105px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 9%,rgba(255,225,139,.2),transparent 24%),
+    linear-gradient(180deg,#251137 0%,#4a1b4f 46%,#19081d 100%);
+}
+
+.lobby-content{
+  position:relative;
+  z-index:2;
+  width:min(100%,1050px);
+  margin:auto;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.mini-logo{
+  color:var(--light-gold);
+  font-size:25px;
+  font-weight:bold;
+  text-shadow:0 2px 3px #401c00;
+}
+
+.time{
+  padding:7px 12px;
+  border:1px solid rgba(255,231,161,.45);
+  border-radius:999px;
+  color:#ffeab3;
+  background:rgba(30,0,25,.45);
+  font-size:13px;
+}
+
+/* シャンデリア */
+.chandelier-space{
+  position:relative;
+  height:165px;
+  display:flex;
+  justify-content:center;
+}
+
+.chain{
+  width:4px;
+  height:50px;
+  background:linear-gradient(#83500d,#fff1a6,#83500d);
+}
+
+.chandelier{
+  position:absolute;
+  top:47px;
+  width:230px;
+  height:105px;
+  animation:glow 2.8s ease-in-out infinite;
+}
+
+.center-piece{
+  position:absolute;
+  left:50%;
+  top:0;
+  width:21px;
+  height:75px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:linear-gradient(90deg,#976313,#fff3ae,#976313);
+}
+
+.arm{
+  position:absolute;
+  top:32px;
+  width:88px;
+  height:45px;
+  border-bottom:5px solid #dfb44d;
+  border-radius:0 0 55% 55%;
+}
+
+.arm.left{right:50%}
+.arm.right{left:50%}
+
+.lamp{
+  position:absolute;
+  width:15px;
+  height:27px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 25%,#fff 0 15%,#fff0a6 38%,#d5921b 78%);
+  box-shadow:0 0 24px #ffe390;
+}
+
+.l1{left:5px;top:48px}
+.l2{left:55px;top:68px}
+.l3{left:107px;top:80px}
+.l4{right:55px;top:68px}
+.l5{right:5px;top:48px}
+
+@keyframes glow{
+  0%,100%{filter:drop-shadow(0 0 10px rgba(255,219,119,.6))}
+  50%{filter:drop-shadow(0 0 27px rgba(255,238,166,1))}
+}
+
+/* 劇場ホール */
+.theater{
+  position:relative;
+  min-height:440px;
+  overflow:hidden;
+  border:2px solid rgba(237,196,94,.78);
+  border-radius:30px 30px 15px 15px;
+  background:
+    radial-gradient(circle at 50% 20%,rgba(126,74,186,.26),transparent 36%),
+    linear-gradient(#2c153e,#441a45 58%,#210b27);
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.48),
+    inset 0 0 45px rgba(255,212,105,.08);
+}
+
+.stained-glass{
+  position:absolute;
+  top:22px;
+  left:50%;
+  width:min(58vw,320px);
+  height:275px;
+  transform:translateX(-50%);
+  overflow:hidden;
+  border:10px solid #d5ac50;
+  border-radius:50% 50% 12px 12px;
+  background:
+    conic-gradient(
+      #f36e9f,
+      #8b63d5,
+      #48b9e6,
+      #f8ce58,
+      #ea657e,
+      #8060c9,
+      #4dc6e8,
+      #f36e9f
+    );
+  box-shadow:
+    0 0 38px rgba(161,112,255,.7),
+    inset 0 0 28px rgba(255,255,255,.5);
+}
+
+.stained-glass::before,
+.stained-glass::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,transparent 47%,#bf9441 48% 52%,transparent 53%),
+    linear-gradient(transparent 47%,#bf9441 48% 52%,transparent 53%);
+}
+
+.stained-glass::after{
+  transform:rotate(45deg) scale(1.5);
+}
+
+.stairs{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  width:94%;
+  height:270px;
+  transform:translateX(-50%);
+}
+
+.stair{
+  position:absolute;
+  bottom:0;
+  width:46%;
+  height:100%;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      #f2dfad 0 15px,
+      #aa8545 16px 20px
+    );
+}
+
+.stair.left{
+  left:0;
+  clip-path:polygon(0 100%,0 55%,100% 0,100% 100%);
+}
+
+.stair.right{
+  right:0;
+  clip-path:polygon(0 0,100% 55%,100% 100%,0 100%);
+}
+
+.carpet{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  width:37%;
+  height:205px;
+  transform:translateX(-50%);
+  clip-path:polygon(32% 0,68% 0,100% 100%,0 100%);
+  background:
+    linear-gradient(90deg,#4c000c,#ae1430 30%,#d72a47 50%,#ae1430 70%,#4c000c);
+  box-shadow:0 0 30px rgba(197,12,54,.55);
+}
+
+.welcome{
+  position:relative;
+  z-index:4;
+  padding:310px 15px 25px;
+  text-align:center;
+  text-shadow:0 3px 8px #000;
+}
+
+.welcome h1{
+  margin:0;
+  color:#ffe8a3;
+  font-size:clamp(30px,8vw,50px);
+}
+
+.welcome p{
+  margin:10px 0 0;
+  line-height:1.8;
+}
+
+/* メニュー */
+.heading{
+  margin:30px 0 15px;
+  text-align:center;
+  color:#ffe8a3;
+  font-size:27px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:13px;
+}
+
+.card{
+  padding:20px 12px;
+  border:1px solid rgba(255,226,143,.55);
+  border-radius:18px;
+  text-align:center;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(255,221,129,.16),transparent 42%),
+    linear-gradient(145deg,rgba(102,0,38,.87),rgba(28,6,35,.96));
+  box-shadow:0 10px 26px rgba(0,0,0,.35);
+}
+
+.card span{
+  display:block;
+  font-size:34px;
+}
+
+.card strong{
+  display:block;
+  margin-top:7px;
+  color:#ffe5a0;
+  font-size:18px;
+}
+
+.card small{
+  display:block;
+  margin-top:7px;
+  color:#decbd4;
+  line-height:1.5;
+}
+
+.message{
+  margin-top:25px;
+  padding:22px 17px;
+  border:1px solid rgba(255,226,143,.5);
+  border-radius:18px;
+  text-align:center;
+  background:rgba(255,255,255,.055);
+}
+
+.message h3{
+  margin:0 0 10px;
+  color:#ffe6a0;
+}
+
+.message p{
+  margin:0;
+  line-height:1.8;
+}
+
+/* PC */
+@media(min-width:760px){
+  .cards{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .theater{
+    min-height:520px;
+  }
+
+  .stained-glass{
+    width:380px;
+    height:330px;
+  }
+
+  .welcome{
+    padding-top:385px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <!-- 開幕画面 -->
-  <section id="opening">
-    <div class="opening-frame">
-      <div class="opening-ornament">◆ ✦ ◆</div>
-      <h1 class="logo">恋ばこ</h1>
-      <p class="opening-copy">恋を開けば、物語が始まる。</p>
-      <button class="enter-button" id="enterButton">入場する</button>
-    </div>
-  </section>
-
-  <!-- カーテン -->
-  <div id="curtainLayer">
-    <div class="curtain-top"></div>
-    <div class="curtain curtain-left"></div>
-    <div class="curtain curtain-right"></div>
+<section id="opening">
+  <div class="opening-card">
+    <div class="ornament">◆ ✦ ◆</div>
+    <h1 class="logo">恋ばこ</h1>
+    <p class="catch">恋を開けば、物語が始まる。</p>
+    <button id="enterButton">入場する</button>
   </div>
+</section>
 
-  <!-- アプリ本体 -->
-  <main id="app">
-    <div class="lobby" id="lobby">
-      <div class="lobby-content">
+<div id="curtainLayer">
+  <div class="curtain-top"></div>
+  <div class="curtain curtain-left"></div>
+  <div class="curtain curtain-right"></div>
+  <div id="sparkles"></div>
+</div>
 
-        <header class="topbar">
-          <div class="mini-logo">恋ばこ</div>
-          <div class="time-label" id="timeLabel">劇場準備中</div>
-        </header>
+<main id="app">
+  <div class="lobby">
+    <div class="lobby-content">
 
-        <!-- ホーム -->
-        <section id="page-home" class="page active">
+      <header class="topbar">
+        <div class="mini-logo">恋ばこ</div>
+        <div class="time" id="timeLabel">劇場準備中</div>
+      </header>
 
-          <div class="chandelier-area">
-            <div class="chain"></div>
-            <div class="chandelier">
-              <div class="chandelier-center"></div>
-              <div class="arm left"></div>
-              <div class="arm right"></div>
-              <div class="lamp l1"></div>
-              <div class="lamp l2"></div>
-              <div class="lamp l3"></div>
-              <div class="lamp l4"></div>
-              <div class="lamp l5"></div>
-            </div>
-          </div>
+      <div class="chandelier-space">
+        <div class="chain"></div>
 
-          <div class="theater-scene">
-            <div class="stained-glass"></div>
-
-            <div class="stairs">
-              <div class="stair-left"></div>
-              <div class="stair-right"></div>
-              <div class="rail left"></div>
-              <div class="rail right"></div>
-              <div class="red-carpet"></div>
-            </div>
-
-            <div class="welcome">
-              <h1>おかえりなさい</h1>
-              <p>
-                ここは、恋と夢と希望が集まる劇場。<br>
-                今日は、どんな物語を始めますか？
-              </p>
-            </div>
-          </div>
-
-          <section class="section">
-            <h2 class="section-title">本日の演目</h2>
-            <p class="section-subtitle">新しい物語は、ここから始まります。</p>
-
-            <div class="cards">
-              <article class="show-card">
-                <span class="icon">🌹</span>
-                <strong>恋</strong>
-                <small>甘い恋、秘密の恋、運命の恋</small>
-                <span class="coming">COMING SOON</span>
-              </article>
-
-              <article class="show-card">
-                <span class="icon">🎭</span>
-                <strong>夢</strong>
-                <small>舞台・音楽・夢を追う物語</small>
-                <span class="coming">COMING SOON</span>
-              </article>
-
-              <article class="show-card">
-                <span class="icon">🌟</span>
-                <strong>希望</strong>
-                <small>新しい一歩を後押しする物語</small>
-                <span class="coming">COMING SOON</span>
-              </article>
-
-              <article class="show-card">
-                <span class="icon">🪽</span>
-                <strong>癒やし</strong>
-                <small>一人ではないと思える時間</small>
-                <span class="coming">COMING SOON</span>
-              </article>
-
-              <article class="show-card">
-                <span class="icon">🦇</span>
-                <strong>人外</strong>
-                <small>吸血鬼・悪魔・天使・人狼</small>
-                <span class="coming">COMING SOON</span>
-              </article>
-
-              <article class="show-card">
-                <span class="icon">👑</span>
-                <strong>ファンタジー</strong>
-                <small>王子様や異世界で始まる恋</small>
-                <span class="coming">COMING SOON</span>
-              </article>
-
-              <article class="show-card">
-                <span class="icon">🏫</span>
-                <strong>学園</strong>
-                <small>青春と放課後の恋物語</small>
-                <span class="coming">COMING SOON</span>
-              </article>
-
-              <article class="show-card">
-                <span class="icon">🎤</span>
-                <strong>推し</strong>
-                <small>憧れが明日を照らす物語</small>
-                <span class="coming">COMING SOON</span>
-              </article>
-            </div>
-          </section>
-
-          <div class="message-box">
-            <h3>今日の言葉</h3>
-            <p id="dailyMessage">
-              夢は一日では叶わない。<br>
-              でも、一歩は今日踏み出せる。
-            </p>
-          </div>
-        </section>
-
-        <!-- 作品一覧 -->
-        <section id="page-works" class="page simple-page">
-          <div class="page-heading">
-            <h2>演目一覧</h2>
-            <p>あなたを待っている物語が、ここに並びます。</p>
-          </div>
-
-          <div class="panel">
-            <h3>公開作品</h3>
-            <p>まだ演目はありません。最初の物語を準備しています。</p>
-          </div>
-
-          <div class="panel">
-            <h3>探す</h3>
-            <input type="search" placeholder="作品名・キャラクター名・タグ">
-          </div>
-        </section>
-
-        <!-- 作品作成 -->
-        <section id="page-create" class="page simple-page">
-          <div class="page-heading">
-            <h2>作品を作る</h2>
-            <p>あなたの物語を、この劇場の新しい演目に。</p>
-          </div>
-
-          <div class="panel">
-            <label>
-              作品タイトル
-              <input id="workTitle" type="text" placeholder="例：夢を歌う君へ">
-            </label>
-
-            <label>
-              キャラクター名
-              <input id="characterName" type="text" placeholder="キャラクター名">
-            </label>
-
-            <label>
-              ジャンル
-              <select id="genre">
-                <option>恋</option>
-                <option>夢</option>
-                <option>希望</option>
-                <option>癒やし</option>
-                <option>人外</option>
-                <option>ファンタジー</option>
-                <option>学園</option>
-                <option>推し</option>
-              </select>
-            </label>
-
-            <label>
-              キャラクター設定
-              <textarea id="characterSetting" placeholder="性格、口調、背景など"></textarea>
-            </label>
-
-            <label>
-              最初の一言
-              <textarea id="firstMessage" placeholder="物語の始まりを書く"></textarea>
-            </label>
-
-            <button class="gold-button" id="draftButton">下書きを保存</button>
-          </div>
-
-          <div class="panel">
-            <h3>保存状況</h3>
-            <p id="saveStatus">まだ下書きはありません。</p>
-          </div>
-        </section>
-
-        <!-- マイページ -->
-        <section id="page-mypage" class="page simple-page">
-          <div class="page-heading">
-            <h2>マイページ</h2>
-            <p>あなたの思い出と物語を大切に保管します。</p>
-          </div>
-
-          <div class="panel">
-            <h3>プロフィール</h3>
-            <p>ログイン機能は今後追加予定です。</p>
-          </div>
-
-          <div class="panel">
-            <h3>お気に入り</h3>
-            <p>好きな作品やキャラクターを保存できるようになります。</p>
-          </div>
-
-          <div class="panel">
-            <h3>セーブデータ</h3>
-            <p>物語の続きを、いつでもここから再開できるようになります。</p>
-          </div>
-        </section>
-
-        <!-- 設定 -->
-        <section id="page-settings" class="page simple-page">
-          <div class="page-heading">
-            <h2>劇場設定</h2>
-            <p>恋ばこを、あなたが過ごしやすい場所へ。</p>
-          </div>
-
-          <div class="panel">
-            <label>
-              文字サイズ
-              <select id="fontSizeSelect">
-                <option value="normal">標準</option>
-                <option value="large">大きめ</option>
-              </select>
-            </label>
-
-            <label>
-              効果音
-              <select>
-                <option>オン</option>
-                <option>オフ</option>
-              </select>
-            </label>
-
-            <label>
-              BGM
-              <select>
-                <option>オン</option>
-                <option>オフ</option>
-              </select>
-            </label>
-          </div>
-        </section>
-
+        <div class="chandelier">
+          <div class="center-piece"></div>
+          <div class="arm left"></div>
+          <div class="arm right"></div>
+          <div class="lamp l1"></div>
+          <div class="lamp l2"></div>
+          <div class="lamp l3"></div>
+          <div class="lamp l4"></div>
+          <div class="lamp l5"></div>
+        </div>
       </div>
+
+      <section class="theater">
+        <div class="stained-glass"></div>
+
+        <div class="stairs">
+          <div class="stair left"></div>
+          <div class="stair right"></div>
+          <div class="carpet"></div>
+        </div>
+
+        <div class="welcome">
+          <h1>おかえりなさい</h1>
+          <p>
+            ここは、恋と夢と希望が集まる劇場。<br>
+            今日は、どんな物語を始めますか？
+          </p>
+        </div>
+      </section>
+
+      <h2 class="heading">本日の演目</h2>
+
+      <section class="cards">
+        <article class="card">
+          <span>🌹</span>
+          <strong>恋</strong>
+          <small>甘い恋、秘密の恋、運命の恋</small>
+        </article>
+
+        <article class="card">
+          <span>🎭</span>
+          <strong>夢</strong>
+          <small>夢を追い続ける人の物語</small>
+        </article>
+
+        <article class="card">
+          <span>🌟</span>
+          <strong>希望</strong>
+          <small>明日への一歩を後押しする物語</small>
+        </article>
+
+        <article class="card">
+          <span>🪽</span>
+          <strong>癒やし</strong>
+          <small>一人ではないと思える時間</small>
+        </article>
+      </section>
+
+      <section class="message">
+        <h3>今日の言葉</h3>
+        <p id="dailyMessage"></p>
+      </section>
+
     </div>
+  </div>
+</main>
 
-    <nav class="bottom-nav">
-      <button class="nav-button active" data-page="home">
-        <span>🏛️</span>ホーム
-      </button>
+<script>
+const opening = document.getElementById("opening");
+const enterButton = document.getElementById("enterButton");
+const curtainLayer = document.getElementById("curtainLayer");
+const app = document.getElementById("app");
+const sparkleArea = document.getElementById("sparkles");
 
-      <button class="nav-button" data-page="works">
-        <span>🎭</span>演目
-      </button>
+function speakAnnouncement(){
+  if(!("speechSynthesis" in window)) return;
 
-      <button class="nav-button" data-page="create">
-        <span>✍️</span>作る
-      </button>
+  speechSynthesis.cancel();
 
-      <button class="nav-button" data-page="mypage">
-        <span>🌹</span>マイページ
-      </button>
+  const message =
+    "皆さま、本日は恋ばこ劇場へお越しいただき、ありがとうございます。間もなく、物語の幕が上がります。どうぞ、ごゆっくりお楽しみください。";
 
-      <button class="nav-button" data-page="settings">
-        <span>⚙️</span>設定
-      </button>
-    </nav>
-  </main>
+  const utterance = new SpeechSynthesisUtterance(message);
+  utterance.lang = "ja-JP";
+  utterance.rate = 0.9;
+  utterance.pitch = 1.05;
+  utterance.volume = 1;
 
-  <script>
-    const opening = document.getElementById("opening");
-    const curtainLayer = document.getElementById("curtainLayer");
-    const app = document.getElementById("app");
-    const enterButton = document.getElementById("enterButton");
+  const voices = speechSynthesis.getVoices();
+  const japaneseVoice = voices.find(voice =>
+    voice.lang && voice.lang.toLowerCase().startsWith("ja")
+  );
 
-    enterButton.addEventListener("click", () => {
-      curtainLayer.classList.add("active");
+  if(japaneseVoice){
+    utterance.voice = japaneseVoice;
+  }
 
-      setTimeout(() => {
-        opening.classList.add("hidden");
-        app.classList.add("visible");
-      }, 180);
+  speechSynthesis.speak(utterance);
+}
 
-      setTimeout(() => {
-        curtainLayer.classList.add("open");
-      }, 360);
+function makeSparkles(){
+  sparkleArea.innerHTML = "";
 
-      setTimeout(() => {
-        curtainLayer.classList.remove("active", "open");
-      }, 2100);
-    });
+  for(let i = 0; i < 55; i++){
+    const sparkle = document.createElement("span");
+    sparkle.className = "sparkle";
 
-    /* ナビゲーション */
-    const navButtons = document.querySelectorAll(".nav-button");
-    const pages = document.querySelectorAll(".page");
+    sparkle.style.left = Math.random() * 100 + "%";
+    sparkle.style.top = 20 + Math.random() * 75 + "%";
+    sparkle.style.animationDelay = Math.random() * 0.8 + "s";
+    sparkle.style.animationDuration = 0.9 + Math.random() * 1.2 + "s";
+    sparkle.style.width = 4 + Math.random() * 8 + "px";
+    sparkle.style.height = sparkle.style.width;
 
-    navButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        const pageName = button.dataset.page;
+    sparkleArea.appendChild(sparkle);
+  }
+}
 
-        navButtons.forEach(item => item.classList.remove("active"));
-        pages.forEach(page => page.classList.remove("active"));
+enterButton.addEventListener("click", () => {
+  enterButton.classList.add("clicked");
+  speakAnnouncement();
 
-        button.classList.add("active");
-        document.getElementById(`page-${pageName}`).classList.add("active");
+  curtainLayer.classList.add("show");
+  makeSparkles();
 
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    });
+  setTimeout(() => {
+    opening.classList.add("hide");
+    app.classList.add("show");
+  }, 250);
 
-    /* 時間帯によってロビーを変化 */
-    function updateLobbyTime() {
-      const lobby = document.getElementById("lobby");
-      const timeLabel = document.getElementById("timeLabel");
-      const hour = new Date().getHours();
+  setTimeout(() => {
+    curtainLayer.classList.add("open");
+  }, 650);
 
-      lobby.classList.remove(
-        "time-morning",
-        "time-evening",
-        "time-night"
-      );
+  setTimeout(() => {
+    curtainLayer.classList.remove("show","open");
+    sparkleArea.innerHTML = "";
+  }, 2700);
+});
 
-      if (hour >= 5 && hour < 12) {
-        lobby.classList.add("time-morning");
-        timeLabel.textContent = "朝の劇場";
-      } else if (hour >= 12 && hour < 17) {
-        timeLabel.textContent = "昼の劇場";
-      } else if (hour >= 17 && hour < 20) {
-        lobby.classList.add("time-evening");
-        timeLabel.textContent = "夕暮れの劇場";
-      } else {
-        lobby.classList.add("time-night");
-        timeLabel.textContent = "夜の劇場";
-      }
-    }
+function updateTime(){
+  const hour = new Date().getHours();
+  const label = document.getElementById("timeLabel");
 
-    updateLobbyTime();
+  if(hour >= 5 && hour < 12){
+    label.textContent = "朝の劇場";
+  }else if(hour >= 12 && hour < 17){
+    label.textContent = "昼の劇場";
+  }else if(hour >= 17 && hour < 20){
+    label.textContent = "夕暮れの劇場";
+  }else{
+    label.textContent = "夜の劇場";
+  }
+}
 
-    /* 今日の言葉 */
-    const dailyMessages = [
-      "夢は一日では叶わない。<br>でも、一歩は今日踏み出せる。",
-      "今日ここへ来てくれたことも、<br>あなたの物語の大切な一幕です。",
-      "立ち止まる日があってもいい。<br>物語は、まだ終わっていない。",
-      "あなたは一人ではありません。<br>この劇場は、いつでも待っています。",
-      "推しからもらった勇気は、<br>いつか誰かへ渡す光になる。",
-      "生きて今日を迎えたこと。<br>それだけでも、十分に素晴らしい。",
-      "なりたい自分へ向かう道は、<br>小さな積み重ねから始まります。"
-    ];
+const messages = [
+  "夢は一日では叶わない。でも、一歩は今日踏み出せる。",
+  "あなたは一人ではありません。この劇場は、いつでも待っています。",
+  "立ち止まる日があってもいい。物語は、まだ終わっていません。",
+  "推しからもらった勇気は、いつか誰かを照らす光になります。",
+  "生きて今日を迎えたこと。それだけでも、十分に素晴らしい。",
+  "今日ここへ来てくれたことも、あなたの物語の大切な一幕です。"
+];
 
-    const today = new Date().getDate();
-    document.getElementById("dailyMessage").innerHTML =
-      dailyMessages[today % dailyMessages.length];
+updateTime();
 
-    /* 下書き保存 */
-    const draftButton = document.getElementById("draftButton");
-    const saveStatus = document.getElementById("saveStatus");
+const index = new Date().getDate() % messages.length;
+document.getElementById("dailyMessage").textContent = messages[index];
+</script>
 
-    draftButton.addEventListener("click", () => {
-      const draft = {
-        title: document.getElementById("workTitle").value,
-        characterName: document.getElementById("characterName").value,
-        genre: document.getElementById("genre").value,
-        setting: document.getElementById("characterSetting").value,
-        firstMessage: document.getElementById("firstMessage").value,
-        savedAt: new Date().toLocaleString("ja-JP")
-      };
-
-      localStorage.setItem("koibakoDraft", JSON.stringify(draft));
-      saveStatus.textContent = `下書きを保存しました：${draft.savedAt}`;
-    });
-
-    /* 保存済み下書きを復元 */
-    const savedDraft = localStorage.getItem("koibakoDraft");
-
-    if (savedDraft) {
-      const draft = JSON.parse(savedDraft);
-
-      document.getElementById("workTitle").value = draft.title || "";
-      document.getElementById("characterName").value =
-        draft.characterName || "";
-      document.getElementById("genre").value = draft.genre || "恋";
-      document.getElementById("characterSetting").value =
-        draft.setting || "";
-      document.getElementById("firstMessage").value =
-        draft.firstMessage || "";
-
-      saveStatus.textContent =
-        `保存済みの下書きがあります：${draft.savedAt}`;
-    }
-
-    /* 文字サイズ */
-    document
-      .getElementById("fontSizeSelect")
-      .addEventListener("change", event => {
-        document.documentElement.style.fontSize =
-          event.target.value === "large" ? "19px" : "16px";
-      });
-  </script>
 </body>
 </html>
