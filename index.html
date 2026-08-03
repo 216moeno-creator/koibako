@@ -1,165 +1,757 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>恋ばこ</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#3a0014">
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+  <title>恋ばこ</title>
 
-body{
-    background:#3b0016;
-    color:#d4af37;
-    font-family:sans-serif;
-}
+  <!-- 今アップした恋ばこ画像をアイコンに使用 -->
+  <link rel="icon" href="file_000000006e8882119118b07309fcc222.png">
+  <link rel="apple-touch-icon" href="file_000000006e8882119118b07309fcc222.png">
 
-.screen{
-    width:100%;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    text-align:center;
-}
+  <style>
+    :root {
+      --wine: #3a0014;
+      --wine-light: #650025;
+      --curtain: #9d001e;
+      --curtain-dark: #590014;
+      --gold: #e8c56b;
+      --gold-light: #fff0a8;
+      --cream: #fff8e8;
+      --glass-blue: #4db5e8;
+      --glass-pink: #ec75ad;
+      --glass-purple: #8652c7;
+    }
 
-h1{
-    font-size:60px;
-    margin-bottom:10px;
-}
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-p{
-    color:white;
-    font-size:22px;
-    margin-bottom:40px;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-button{
-    padding:18px 45px;
-    border:none;
-    border-radius:50px;
-    font-size:22px;
-    font-weight:bold;
-    background:#d4af37;
-    color:#3b0016;
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--wine);
+      color: var(--cream);
+      font-family:
+        "Yu Mincho",
+        "Hiragino Mincho ProN",
+        "Noto Serif JP",
+        serif;
+    }
 
-button:hover{
-    transform:scale(1.05);
-}
+    button {
+      font: inherit;
+    }
 
-#game{
-    display:none;
-    background:#f5f5f5;
-    color:black;
-}
+    /* =========================
+       開幕画面
+    ========================= */
 
-.chat{
-    width:90%;
-    max-width:700px;
-    height:70vh;
-    background:white;
-    border-radius:20px;
-    overflow:auto;
-    padding:20px;
-    box-shadow:0 0 15px rgba(0,0,0,.2);
-}
+    #opening {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 42%, #7d1536 0%, #460018 48%, #210009 100%);
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
 
-.message{
-    margin:15px 0;
-    padding:12px;
-    background:#ffe8f0;
-    border-radius:12px;
-}
+    #opening.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
 
-input{
-    width:75%;
-    padding:15px;
-    border-radius:30px;
-    border:1px solid #ccc;
-    margin-top:20px;
-}
+    .opening-frame {
+      width: min(88vw, 520px);
+      padding: 44px 24px;
+      text-align: center;
+      border: 2px solid var(--gold);
+      border-radius: 24px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.01));
+      box-shadow:
+        0 0 0 7px rgba(232,197,107,.08),
+        0 25px 70px rgba(0,0,0,.5),
+        inset 0 0 30px rgba(255,224,132,.05);
+    }
 
-.send{
-    margin-left:10px;
-}
-</style>
+    .opening-ornament {
+      color: var(--gold);
+      font-size: 28px;
+      letter-spacing: 10px;
+      margin-bottom: 8px;
+    }
 
-</head>
+    .logo {
+      margin: 0;
+      font-size: clamp(50px, 15vw, 84px);
+      letter-spacing: .08em;
+      line-height: 1.25;
+      color: transparent;
+      background:
+        linear-gradient(
+          180deg,
+          #fff7c9 0%,
+          #efcc6e 34%,
+          #b77b20 66%,
+          #ffe9a0 100%
+        );
+      -webkit-background-clip: text;
+      background-clip: text;
+      filter: drop-shadow(0 3px 1px #5e2e00);
+    }
 
-<body>
+    .opening-copy {
+      margin: 12px 0 0;
+      color: #fff5e5;
+      font-size: clamp(16px, 4.5vw, 21px);
+      letter-spacing: .12em;
+    }
 
-<div id="title" class="screen">
+    .enter-button {
+      margin-top: 35px;
+      min-width: 180px;
+      padding: 16px 34px;
+      border: 1px solid #fff1ab;
+      border-radius: 999px;
+      color: #3a0014;
+      background:
+        linear-gradient(180deg, #fff1ad, #d4a541 58%, #f2d476);
+      box-shadow:
+        0 8px 22px rgba(0,0,0,.35),
+        inset 0 1px 1px #fffbd7;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s ease, filter .2s ease;
+    }
 
-<h1>恋ばこ</h1>
+    .enter-button:active {
+      transform: scale(.96);
+    }
 
-<p>恋の幕が、いま開く。</p>
+    /* =========================
+       カーテン
+    ========================= */
 
-<button onclick="startGame()">入場する</button>
+    #curtainLayer {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      pointer-events: none;
+      visibility: hidden;
+    }
 
-</div>
+    #curtainLayer.active {
+      visibility: visible;
+    }
 
-<div id="game" class="screen">
+    .curtain {
+      position: absolute;
+      top: 0;
+      width: 51%;
+      height: 100%;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #570013 0,
+          #a80025 9%,
+          #d01b38 17%,
+          #830018 27%,
+          #4d000e 36%
+        );
+      box-shadow: inset 0 0 50px rgba(0,0,0,.48);
+      transition: transform 1.45s cubic-bezier(.63,.01,.25,1);
+    }
 
-<h2 style="margin-bottom:20px;">恋ばこ チャット</h2>
+    .curtain::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.16), transparent 22%, rgba(0,0,0,.26));
+    }
 
-<div class="chat" id="chat">
+    .curtain-left {
+      left: 0;
+      border-right: 4px solid #e4b84f;
+    }
 
-<div class="message">
-ようこそ、恋ばこの世界へ。
-</div>
+    .curtain-right {
+      right: 0;
+      border-left: 4px solid #e4b84f;
+    }
 
-</div>
+    #curtainLayer.open .curtain-left {
+      transform: translateX(-97%);
+    }
 
-<div>
+    #curtainLayer.open .curtain-right {
+      transform: translateX(97%);
+    }
 
-<input id="text" placeholder="メッセージを入力">
+    .curtain-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 12%;
+      z-index: 3;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #560011 0,
+          #b00026 8%,
+          #6b0017 16%
+        );
+      border-bottom: 5px solid #d9aa3a;
+      border-radius: 0 0 45% 45%;
+      box-shadow: 0 8px 25px rgba(0,0,0,.4);
+    }
 
-<button class="send" onclick="sendMessage()">
-送信
-</button>
+    /* =========================
+       劇場ロビー
+    ========================= */
 
-</div>
+    #app {
+      min-height: 100vh;
+      display: none;
+      background:
+        radial-gradient(circle at 50% 10%, rgba(255,228,150,.18), transparent 25%),
+        linear-gradient(180deg, #241036 0%, #3f1948 44%, #1a081c 100%);
+    }
 
-</div>
+    #app.visible {
+      display: block;
+    }
 
-<script>
+    .lobby {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      padding: 22px 16px 110px;
+      transition: filter 1s ease, background 1s ease;
+    }
 
-function startGame(){
+    .lobby::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+    }
 
-document.getElementById("title").style.display="none";
-document.getElementById("game").style.display="flex";
+    .time-morning {
+      background:
+        linear-gradient(180deg, rgba(255,220,170,.18), rgba(85,30,85,.12));
+    }
 
-}
+    .time-evening {
+      background:
+        linear-gradient(180deg, rgba(255,116,95,.16), rgba(65,17,63,.2));
+    }
 
-function sendMessage(){
+    .time-night {
+      background:
+        linear-gradient(180deg, rgba(15,20,70,.32), rgba(24,5,31,.3));
+    }
 
-let input=document.getElementById("text");
+    .lobby-content {
+      position: relative;
+      z-index: 2;
+      width: min(100%, 1100px);
+      margin: 0 auto;
+    }
 
-if(input.value=="") return;
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
 
-let chat=document.getElementById("chat");
+    .mini-logo {
+      font-size: 25px;
+      font-weight: 700;
+      color: var(--gold-light);
+      text-shadow: 0 2px 2px #4a2300;
+      letter-spacing: .08em;
+    }
 
-chat.innerHTML+=`
-<div class="message">
-${input.value}
-</div>
-`;
+    .time-label {
+      padding: 8px 13px;
+      border: 1px solid rgba(255,231,161,.45);
+      border-radius: 999px;
+      background: rgba(35,0,30,.45);
+      color: #ffeab3;
+      font-size: 13px;
+      backdrop-filter: blur(8px);
+    }
 
-chat.scrollTop=chat.scrollHeight;
+    /* シャンデリア */
 
-input.value="";
+    .chandelier-area {
+      position: relative;
+      height: 145px;
+      margin-top: -8px;
+      display: flex;
+      justify-content: center;
+    }
 
-}
+    .chain {
+      width: 4px;
+      height: 43px;
+      background: linear-gradient(#c89732, #fff1a6, #8b5c14);
+    }
 
-</script>
+    .chandelier {
+      position: absolute;
+      top: 40px;
+      width: 200px;
+      height: 95px;
+      filter: drop-shadow(0 0 12px rgba(255,222,122,.85));
+      animation: chandelierGlow 3s ease-in-out infinite;
+    }
 
-</body>
-</html>
-<link rel="icon" href="file_000000006e8882119118b07309fcc222.png">
-<link rel="apple-touch-icon" href="file_000000006e8882119118b07309fcc222.png">
+    .chandelier-center {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 20px;
+      height: 66px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: linear-gradient(90deg, #9f6a16, #fff0a6, #a56f18);
+    }
+
+    .arm {
+      position: absolute;
+      top: 28px;
+      width: 76px;
+      height: 38px;
+      border-bottom: 5px solid #deb64f;
+      border-radius: 0 0 50% 50%;
+    }
+
+    .arm.left {
+      right: 50%;
+    }
+
+    .arm.right {
+      left: 50%;
+    }
+
+    .lamp {
+      position: absolute;
+      width: 13px;
+      height: 25px;
+      border-radius: 50% 50% 40% 40%;
+      background:
+        radial-gradient(circle at 50% 28%, white 0 14%, #fff0a5 38%, #d89c24 78%);
+      box-shadow: 0 0 20px #ffe79a;
+    }
+
+    .lamp.l1 { left: 10px; top: 42px; }
+    .lamp.l2 { left: 52px; top: 61px; }
+    .lamp.l3 { right: 52px; top: 61px; }
+    .lamp.l4 { right: 10px; top: 42px; }
+    .lamp.l5 { left: 93px; top: 72px; }
+
+    @keyframes chandelierGlow {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(255,220,120,.65)); }
+      50% { filter: drop-shadow(0 0 22px rgba(255,235,155,1)); }
+    }
+
+    /* ステンドグラス */
+
+    .theater-scene {
+      position: relative;
+      min-height: 360px;
+      margin-top: -15px;
+      overflow: hidden;
+      border: 2px solid rgba(239,198,96,.75);
+      border-radius: 28px 28px 14px 14px;
+      background:
+        linear-gradient(180deg, rgba(34,14,54,.82), rgba(56,19,54,.95));
+      box-shadow:
+        0 24px 60px rgba(0,0,0,.42),
+        inset 0 0 45px rgba(255,213,112,.09);
+    }
+
+    .stained-glass {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      width: min(54vw, 280px);
+      height: 235px;
+      transform: translateX(-50%);
+      overflow: hidden;
+      border: 9px solid #d4ad56;
+      border-radius: 50% 50% 12px 12px;
+      background:
+        conic-gradient(
+          from 0deg,
+          #f36ca0,
+          #8c62d4,
+          #4fb8e9,
+          #f7cc58,
+          #e9677e,
+          #8262ce,
+          #56bfe8,
+          #f36ca0
+        );
+      box-shadow:
+        0 0 32px rgba(150,110,255,.55),
+        inset 0 0 25px rgba(255,255,255,.45);
+    }
+
+    .stained-glass::before,
+    .stained-glass::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 47%, #c79d49 48% 52%, transparent 53%),
+        linear-gradient(transparent 47%, #c79d49 48% 52%, transparent 53%);
+    }
+
+    .stained-glass::after {
+      transform: rotate(45deg) scale(1.5);
+    }
+
+    /* 階段 */
+
+    .stairs {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 92%;
+      height: 215px;
+      transform: translateX(-50%);
+    }
+
+    .stair-left,
+    .stair-right {
+      position: absolute;
+      bottom: 0;
+      width: 46%;
+      height: 100%;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          #eedaa8 0 14px,
+          #b7934e 15px 18px
+        );
+      border-top: 3px solid #ffe7a6;
+      box-shadow: 0 -8px 20px rgba(255,232,172,.1);
+    }
+
+    .stair-left {
+      left: 0;
+      clip-path: polygon(0 100%, 0 55%, 100% 0, 100% 100%);
+    }
+
+    .stair-right {
+      right: 0;
+      clip-path: polygon(0 0, 100% 55%, 100% 100%, 0 100%);
+    }
+
+    .red-carpet {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 34%;
+      height: 160px;
+      transform: translateX(-50%);
+      background:
+        linear-gradient(90deg, #52000e, #b71232 30%, #ce2440 50%, #b71232 70%, #52000e);
+      clip-path: polygon(32% 0, 68% 0, 100% 100%, 0 100%);
+      box-shadow: 0 0 20px rgba(178,0,43,.45);
+    }
+
+    .rail {
+      position: absolute;
+      bottom: 25px;
+      width: 43%;
+      height: 150px;
+      border-top: 5px solid #e7bd55;
+    }
+
+    .rail.left {
+      left: 2%;
+      transform: rotate(-26deg);
+      transform-origin: left bottom;
+    }
+
+    .rail.right {
+      right: 2%;
+      transform: rotate(26deg);
+      transform-origin: right bottom;
+    }
+
+    .welcome {
+      position: relative;
+      z-index: 4;
+      padding-top: 245px;
+      text-align: center;
+      text-shadow: 0 2px 5px rgba(0,0,0,.9);
+    }
+
+    .welcome h1 {
+      margin: 0;
+      color: #ffe8a2;
+      font-size: clamp(28px, 7vw, 48px);
+    }
+
+    .welcome p {
+      margin: 9px 16px 0;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    /* 演目カード */
+
+    .section {
+      margin-top: 28px;
+    }
+
+    .section-title {
+      margin: 0 0 15px;
+      color: var(--gold-light);
+      font-size: 25px;
+      text-align: center;
+      letter-spacing: .08em;
+    }
+
+    .section-subtitle {
+      margin: -6px 0 17px;
+      color: #e7d3dc;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .show-card {
+      position: relative;
+      min-height: 140px;
+      padding: 18px 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,225,142,.55);
+      border-radius: 17px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,222,132,.17), transparent 42%),
+        linear-gradient(145deg, rgba(101,0,37,.86), rgba(31,7,38,.94));
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.3),
+        inset 0 0 18px rgba(255,218,128,.05);
+    }
+
+    .show-card .icon {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 33px;
+    }
+
+    .show-card strong {
+      display: block;
+      color: #ffe6a0;
+      font-size: 17px;
+    }
+
+    .show-card small {
+      display: block;
+      margin-top: 7px;
+      color: #e2ced7;
+    }
+
+    .coming {
+      display: inline-block;
+      margin-top: 11px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: #f9df9a;
+      background: rgba(0,0,0,.24);
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+
+    /* 今日の言葉 */
+
+    .message-box {
+      margin-top: 25px;
+      padding: 22px 18px;
+      border: 1px solid rgba(255,226,146,.55);
+      border-radius: 18px;
+      text-align: center;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.065), rgba(255,255,255,.02));
+      box-shadow: inset 0 0 22px rgba(255,214,112,.04);
+    }
+
+    .message-box h3 {
+      margin: 0 0 10px;
+      color: #ffe6a0;
+    }
+
+    .message-box p {
+      margin: 0;
+      line-height: 1.9;
+      color: #fff7ed;
+    }
+
+    /* ページ */
+
+    .page {
+      display: none;
+      animation: fadeIn .35s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .simple-page {
+      padding: 28px 0 40px;
+    }
+
+    .page-heading {
+      text-align: center;
+    }
+
+    .page-heading h2 {
+      margin: 0;
+      color: #ffe7a0;
+      font-size: 30px;
+    }
+
+    .page-heading p {
+      color: #dbcbd3;
+      line-height: 1.7;
+    }
+
+    .panel {
+      margin-top: 20px;
+      padding: 19px;
+      border: 1px solid rgba(255,225,142,.4);
+      border-radius: 17px;
+      background: rgba(22,4,27,.62);
+    }
+
+    .panel h3 {
+      margin-top: 0;
+      color: #ffe5a0;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      color: #f5e3eb;
+      font-size: 14px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      margin-top: 7px;
+      padding: 13px;
+      border: 1px solid rgba(232,197,107,.45);
+      border-radius: 11px;
+      outline: none;
+      color: white;
+      background: rgba(255,255,255,.08);
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .gold-button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      border: 0;
+      border-radius: 999px;
+      color: #3a0014;
+      background: linear-gradient(#ffe9a2, #c79735);
+      font-weight: 700;
+    }
+
+    /* 下部ナビ */
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 20;
+      width: min(100%, 1100px);
+      transform: translateX(-50%);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid rgba(255,224,141,.45);
+      background: rgba(31,1,26,.93);
+      backdrop-filter: blur(15px);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .nav-button {
+      min-height: 71px;
+      border: 0;
+      color: #bea9b2;
+      background: transparent;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .nav-button span {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 23px;
+    }
+
+    .nav-button.active {
+      color: #ffe59a;
+      background:
+        linear-gradient(180deg, rgba(255,220,117,.12), transparent);
+    }
+
+    /* PC */
+
+    @media (min-width: 760px) {
+      .lobby {
+        padding-left: 34px;
+        padding-right: 34px;
+      }
+
+      .cards {
+       
