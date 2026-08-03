@@ -1788,3 +1788,1710 @@ textarea.form-control {
     </div>
 
   </div>
+<script type="module">
+  import {
+    initializeApp
+  } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signInWithRedirect,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut,
+    updateProfile
+  } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+  import {
+    getFirestore,
+    collection,
+    doc,
+    setDoc,
+    deleteDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+
+  /* Firebase接続情報 */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCeGBhIN06rgVwC2AFH5uJAFWBEnimtvX8",
+    authDomain: "koibakoapp.firebaseapp.com",
+    projectId: "koibakoapp",
+    storageBucket: "koibakoapp.firebasestorage.app",
+    messagingSenderId: "227394461437",
+    appId: "1:227394461437:web:e677c23c2bbf80bbf5a894",
+    measurementId: "G-137XD9EBN3"
+  };
+
+
+  /* Firebase開始 */
+  const firebaseApp =
+    initializeApp(firebaseConfig);
+
+  const auth =
+    getAuth(firebaseApp);
+
+  const db =
+    getFirestore(firebaseApp);
+
+  const googleProvider =
+    new GoogleAuthProvider();
+
+
+  /* 状態 */
+  let currentUser = null;
+
+  let allWorks = [];
+
+  let preparedImage = "";
+
+  let selectedGenre = "すべて";
+
+  let signupMode = false;
+
+  let stopWorksListener = null;
+
+
+  /* 要素取得 */
+  const loadingScreen =
+    document.getElementById("loadingScreen");
+
+  const authScreen =
+    document.getElementById("authScreen");
+
+  const curtainScreen =
+    document.getElementById("curtainScreen");
+
+  const loginTab =
+    document.getElementById("loginTab");
+
+  const signupTab =
+    document.getElementById("signupTab");
+
+  const googleLoginButton =
+    document.getElementById("googleLoginButton");
+
+  const emailAuthButton =
+    document.getElementById("emailAuthButton");
+
+  const authEmail =
+    document.getElementById("authEmail");
+
+  const authPassword =
+    document.getElementById("authPassword");
+
+  const authMessage =
+    document.getElementById("authMessage");
+
+  const topUserName =
+    document.getElementById("topUserName");
+
+  const profileIcon =
+    document.getElementById("profileIcon");
+
+  const profileName =
+    document.getElementById("profileName");
+
+  const profileEmail =
+    document.getElementById("profileEmail");
+
+  const postCount =
+    document.getElementById("postCount");
+
+  const homeWorksGrid =
+    document.getElementById("homeWorksGrid");
+
+  const homeWorksTitle =
+    document.getElementById("homeWorksTitle");
+
+  const allWorksGrid =
+    document.getElementById("allWorksGrid");
+
+  const myWorksGrid =
+    document.getElementById("myWorksGrid");
+
+  const workModal =
+    document.getElementById("workModal");
+
+  const modalContent =
+    document.getElementById("modalContent");
+
+
+  /* HTML安全表示 */
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+
+  /* エラーを日本語にする */
+  function getErrorMessage(error) {
+    const messages = {
+      "auth/invalid-credential":
+        "メールアドレスまたはパスワードが違います。",
+
+      "auth/email-already-in-use":
+        "このメールアドレスはすでに登録されています。",
+
+      "auth/weak-password":
+        "パスワードは6文字以上にしてください。",
+
+      "auth/invalid-email":
+        "メールアドレスの形式を確認してください。",
+
+      "auth/popup-closed-by-user":
+        "Googleログイン画面が閉じられました。",
+
+      "auth/popup-blocked":
+        "ログイン画面がブロックされました。もう一度お試しください。",
+
+      "auth/unauthorized-domain":
+        "このサイトのURLがFirebaseで許可されていません。",
+
+      "permission-denied":
+        "Firebaseの保存ルールによって操作が拒否されました。"
+    };
+
+    return (
+      messages[error.code] ||
+      error.message ||
+      "エラーが発生しました。"
+    );
+  }
+
+
+  /* ログイン／新規登録タブ */
+  function setAuthMode(mode) {
+    signupMode =
+      mode === "signup";
+
+    loginTab.classList.toggle(
+      "active",
+      !signupMode
+    );
+
+    signupTab.classList.toggle(
+      "active",
+      signupMode
+    );
+
+    emailAuthButton.textContent =
+      signupMode
+        ? "新規登録する"
+        : "ログイン";
+
+    authPassword.autocomplete =
+      signupMode
+        ? "new-password"
+        : "current-password";
+
+    authMessage.textContent = "";
+  }
+
+
+  loginTab.addEventListener(
+    "click",
+    function() {
+      setAuthMode("login");
+    }
+  );
+
+
+  signupTab.addEventListener(
+    "click",
+    function() {
+      setAuthMode("signup");
+    }
+  );
+
+
+  /* メールログイン・登録 */
+  emailAuthButton.addEventListener(
+    "click",
+    async function() {
+      const email =
+        authEmail.value.trim();
+
+      const password =
+        authPassword.value;
+
+      if (!email) {
+        authMessage.textContent =
+          "メールアドレスを入力してください。";
+        return;
+      }
+
+      if (password.length < 6) {
+        authMessage.textContent =
+          "パスワードは6文字以上で入力してください。";
+        return;
+      }
+
+      try {
+        authMessage.textContent =
+          signupMode
+            ? "登録しています…"
+            : "ログインしています…";
+
+        if (signupMode) {
+          const credential =
+            await createUserWithEmailAndPassword(
+              auth,
+              email,
+              password
+            );
+
+          const defaultName =
+            email.split("@")[0];
+
+          await updateProfile(
+            credential.user,
+            {
+              displayName: defaultName
+            }
+          );
+        } else {
+          await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+        }
+
+        authMessage.textContent = "";
+      } catch (error) {
+        console.error(error);
+
+        authMessage.textContent =
+          getErrorMessage(error);
+      }
+    }
+  );
+
+
+  /* Enterでもログイン */
+  authPassword.addEventListener(
+    "keydown",
+    function(event) {
+      if (event.key === "Enter") {
+        emailAuthButton.click();
+      }
+    }
+  );
+
+
+  /* Googleログイン */
+  googleLoginButton.addEventListener(
+    "click",
+    async function() {
+      try {
+        authMessage.textContent =
+          "Googleログインを開いています…";
+
+        await signInWithPopup(
+          auth,
+          googleProvider
+        );
+
+        authMessage.textContent = "";
+      } catch (error) {
+        console.error(error);
+
+        if (
+          error.code === "auth/popup-blocked"
+        ) {
+          try {
+            await signInWithRedirect(
+              auth,
+              googleProvider
+            );
+          } catch (redirectError) {
+            authMessage.textContent =
+              getErrorMessage(
+                redirectError
+              );
+          }
+
+          return;
+        }
+
+        authMessage.textContent =
+          getErrorMessage(error);
+      }
+    }
+  );
+
+
+  /* ログイン状態確認 */
+  onAuthStateChanged(
+    auth,
+    function(user) {
+      currentUser = user;
+
+      loadingScreen.classList.add(
+        "hidden"
+      );
+
+      if (!user) {
+        authScreen.classList.remove(
+          "hidden"
+        );
+
+        curtainScreen.classList.add(
+          "hidden"
+        );
+
+        if (stopWorksListener) {
+          stopWorksListener();
+          stopWorksListener = null;
+        }
+
+        allWorks = [];
+
+        renderHomeWorks();
+
+        return;
+      }
+
+      authScreen.classList.add(
+        "hidden"
+      );
+
+      curtainScreen.classList.remove(
+        "hidden"
+      );
+
+      curtainScreen.classList.remove(
+        "open"
+      );
+
+      renderCurrentUser();
+
+      startWorksListener();
+    }
+  );
+
+
+  /* ユーザー表示 */
+  function renderCurrentUser() {
+    if (!currentUser) {
+      return;
+    }
+
+    const displayName =
+      currentUser.displayName ||
+      currentUser.email
+        ?.split("@")[0] ||
+      "観客";
+
+    topUserName.textContent =
+      displayName;
+
+    profileName.textContent =
+      displayName;
+
+    profileEmail.textContent =
+      currentUser.email || "";
+
+    if (currentUser.photoURL) {
+      profileIcon.innerHTML = `
+        <img
+          src="${escapeHtml(
+            currentUser.photoURL
+          )}"
+          alt="プロフィール画像"
+        >
+      `;
+    } else {
+      profileIcon.textContent =
+        "🌹";
+    }
+  }
+
+
+  /* カーテンを開く */
+  window.openCurtain =
+    function() {
+      curtainScreen.classList.add(
+        "open"
+      );
+
+      setTimeout(
+        function() {
+          curtainScreen.classList.add(
+            "hidden"
+          );
+        },
+        1900
+      );
+    };
+
+
+  /* ログアウト */
+  window.logoutUser =
+    async function() {
+      const confirmed =
+        confirm(
+          "恋ばこからログアウトしますか？"
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        await signOut(auth);
+
+        showPage("home");
+      } catch (error) {
+        alert(
+          getErrorMessage(error)
+        );
+      }
+    };
+
+
+  /* Firestoreから作品をリアルタイム取得 */
+  function startWorksListener() {
+    if (stopWorksListener) {
+      stopWorksListener();
+    }
+
+    const worksQuery =
+      query(
+        collection(db, "works"),
+        orderBy(
+          "updatedAt",
+          "desc"
+        )
+      );
+
+    stopWorksListener =
+      onSnapshot(
+        worksQuery,
+
+        function(snapshot) {
+          allWorks =
+            snapshot.docs.map(
+              function(workDocument) {
+                return {
+                  id: workDocument.id,
+                  ...workDocument.data()
+                };
+              }
+            );
+
+          renderHomeWorks();
+
+          renderWorks(
+            selectedGenre
+          );
+
+          renderMyPage();
+        },
+
+        function(error) {
+          console.error(error);
+
+          alert(
+            "作品を読み込めませんでした。\n" +
+            getErrorMessage(error)
+          );
+        }
+      );
+  }
+
+
+  /* ページ切り替え */
+  window.showPage =
+    function(pageName) {
+      const pageMap = {
+        home: "homePage",
+        works: "worksPage",
+        create: "createPage",
+        mypage: "mypagePage",
+        settings: "settingsPage"
+      };
+
+      Object.values(
+        pageMap
+      ).forEach(
+        function(pageId) {
+          document
+            .getElementById(pageId)
+            .classList.add(
+              "hidden"
+            );
+        }
+      );
+
+      document
+        .getElementById(
+          pageMap[pageName]
+        )
+        .classList.remove(
+          "hidden"
+        );
+
+      document
+        .querySelectorAll(
+          ".nav-button"
+        )
+        .forEach(
+          function(button) {
+            button.classList.toggle(
+              "active",
+              button.dataset.page ===
+                pageName
+            );
+          }
+        );
+
+      if (pageName === "home") {
+        renderHomeWorks();
+      }
+
+      if (pageName === "works") {
+        renderWorks("すべて");
+      }
+
+      if (pageName === "mypage") {
+        renderMyPage();
+      }
+
+      window.scrollTo({
+        top: 0,
+        behavior: "instant"
+      });
+    };
+
+
+  /* 本日の演目へ移動 */
+  window.scrollToGenres =
+    function() {
+      document
+        .getElementById(
+          "genreSection"
+        )
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+    };
+
+
+  /* 文字数カウンター */
+  const counterSettings = [
+    {
+      input: "workTitle",
+      counter: "titleCounter"
+    },
+    {
+      input: "workIntro",
+      counter: "introCounter"
+    },
+    {
+      input: "workStory",
+      counter: "storyCounter"
+    },
+    {
+      input: "workGreeting",
+      counter: "greetingCounter"
+    }
+  ];
+
+
+  counterSettings.forEach(
+    function(setting) {
+      const input =
+        document.getElementById(
+          setting.input
+        );
+
+      const counter =
+        document.getElementById(
+          setting.counter
+        );
+
+      input.addEventListener(
+        "input",
+        function() {
+          counter.textContent =
+            input.value.length +
+            "/" +
+            input.maxLength;
+        }
+      );
+    }
+  );
+
+
+  /* 表紙画像を小さくする */
+  document
+    .getElementById("workImage")
+    .addEventListener(
+      "change",
+      async function(event) {
+        const file =
+          event.target.files[0];
+
+        if (!file) {
+          return;
+        }
+
+        if (
+          !file.type.startsWith(
+            "image/"
+          )
+        ) {
+          alert(
+            "画像ファイルを選択してください。"
+          );
+
+          event.target.value = "";
+
+          return;
+        }
+
+        const originalData =
+          await new Promise(
+            function(resolve, reject) {
+              const reader =
+                new FileReader();
+
+              reader.onload =
+                function() {
+                  resolve(
+                    reader.result
+                  );
+                };
+
+              reader.onerror =
+                function() {
+                  reject(
+                    new Error(
+                      "画像を読み込めませんでした。"
+                    )
+                  );
+                };
+
+              reader.readAsDataURL(
+                file
+              );
+            }
+          );
+
+        const image =
+          new Image();
+
+        image.onload =
+          function() {
+            const maxWidth =
+              480;
+
+            const scale =
+              Math.min(
+                1,
+                maxWidth /
+                  image.width
+              );
+
+            const canvas =
+              document.createElement(
+                "canvas"
+              );
+
+            canvas.width =
+              Math.round(
+                image.width *
+                  scale
+              );
+
+            canvas.height =
+              Math.round(
+                image.height *
+                  scale
+              );
+
+            const context =
+              canvas.getContext(
+                "2d"
+              );
+
+            context.drawImage(
+              image,
+              0,
+              0,
+              canvas.width,
+              canvas.height
+            );
+
+            preparedImage =
+              canvas.toDataURL(
+                "image/jpeg",
+                0.6
+              );
+
+            if (
+              preparedImage.length >
+              500000
+            ) {
+              preparedImage = "";
+
+              event.target.value = "";
+
+              alert(
+                "画像が大きすぎます。\n別の画像を選択してください。"
+              );
+
+              return;
+            }
+
+            const preview =
+              document.getElementById(
+                "imagePreview"
+              );
+
+            preview.src =
+              preparedImage;
+
+            preview.style.display =
+              "block";
+          };
+
+        image.onerror =
+          function() {
+            alert(
+              "画像を表示できませんでした。"
+            );
+          };
+
+        image.src =
+          originalData;
+      }
+    );
+
+
+  /* 入力内容をまとめる */
+  function getWorkFormData(
+    statusOverride
+  ) {
+    const editingId =
+      document
+        .getElementById(
+          "editingId"
+        )
+        .value;
+
+    return {
+      id:
+        editingId ||
+        crypto.randomUUID(),
+
+      title:
+        document
+          .getElementById(
+            "workTitle"
+          )
+          .value
+          .trim(),
+
+      genre:
+        document
+          .getElementById(
+            "workGenre"
+          )
+          .value,
+
+      intro:
+        document
+          .getElementById(
+            "workIntro"
+          )
+          .value
+          .trim(),
+
+      story:
+        document
+          .getElementById(
+            "workStory"
+          )
+          .value
+          .trim(),
+
+      greeting:
+        document
+          .getElementById(
+            "workGreeting"
+          )
+          .value
+          .trim(),
+
+      image:
+        preparedImage,
+
+      status:
+        statusOverride ||
+        document
+          .getElementById(
+            "workStatus"
+          )
+          .value,
+
+      ownerId:
+        currentUser.uid,
+
+      ownerName:
+        currentUser.displayName ||
+        currentUser.email
+          ?.split("@")[0] ||
+        "匿名",
+
+      ownerPhoto:
+        currentUser.photoURL ||
+        "",
+
+      updatedAt:
+        serverTimestamp()
+    };
+  }
+
+
+  /* 必須項目確認 */
+  function validateWork(work) {
+    if (!work.title) {
+      alert(
+        "作品タイトルを入力してください。"
+      );
+
+      return false;
+    }
+
+    if (!work.genre) {
+      alert(
+        "ジャンルを選択してください。"
+      );
+
+      return false;
+    }
+
+    if (!work.intro) {
+      alert(
+        "キャラクター紹介を入力してください。"
+      );
+
+      return false;
+    }
+
+    if (!work.story) {
+      alert(
+        "性格・設定・物語を入力してください。"
+      );
+
+      return false;
+    }
+
+    return true;
+  }
+
+
+  /* Firestoreへ保存 */
+  async function saveWorkToFirebase(
+    work
+  ) {
+    await setDoc(
+      doc(
+        db,
+        "works",
+        work.id
+      ),
+      work,
+      {
+        merge: true
+      }
+    );
+  }
+
+
+  /* 公開・保存 */
+  window.publishWork =
+    async function() {
+      if (!currentUser) {
+        alert(
+          "ログインしてください。"
+        );
+
+        return;
+      }
+
+      const work =
+        getWorkFormData();
+
+      if (!validateWork(work)) {
+        return;
+      }
+
+      try {
+        await saveWorkToFirebase(
+          work
+        );
+
+        if (
+          work.status === "公開"
+        ) {
+          alert(
+            "作品を公開しました！"
+          );
+        } else {
+          alert(
+            work.status +
+            "として保存しました。"
+          );
+        }
+
+        resetForm();
+
+        showPage("works");
+      } catch (error) {
+        console.error(error);
+
+        alert(
+          "作品を保存できませんでした。\n" +
+          getErrorMessage(error)
+        );
+      }
+    };
+
+
+  /* 下書き保存 */
+  window.saveDraft =
+    async function() {
+      if (!currentUser) {
+        alert(
+          "ログインしてください。"
+        );
+
+        return;
+      }
+
+      const work =
+        getWorkFormData(
+          "下書き"
+        );
+
+      if (!work.title) {
+        alert(
+          "下書きには作品タイトルが必要です。"
+        );
+
+        return;
+      }
+
+      try {
+        await saveWorkToFirebase(
+          work
+        );
+
+        alert(
+          "下書きを保存しました。"
+        );
+
+        resetForm();
+
+        showPage("mypage");
+      } catch (error) {
+        console.error(error);
+
+        alert(
+          "下書きを保存できませんでした。\n" +
+          getErrorMessage(error)
+        );
+      }
+    };
+
+
+  /* 入力内容を消す */
+  window.resetForm =
+    function() {
+      document.getElementById(
+        "editingId"
+      ).value = "";
+
+      document.getElementById(
+        "workTitle"
+      ).value = "";
+
+      document.getElementById(
+        "workGenre"
+      ).value = "";
+
+      document.getElementById(
+        "workIntro"
+      ).value = "";
+
+      document.getElementById(
+        "workStory"
+      ).value = "";
+
+      document.getElementById(
+        "workGreeting"
+      ).value = "";
+
+      document.getElementById(
+        "workImage"
+      ).value = "";
+
+      document.getElementById(
+        "workStatus"
+      ).value = "公開";
+
+      preparedImage = "";
+
+      const preview =
+        document.getElementById(
+          "imagePreview"
+        );
+
+      preview.removeAttribute(
+        "src"
+      );
+
+      preview.style.display =
+        "none";
+
+      counterSettings.forEach(
+        function(setting) {
+          document.getElementById(
+            setting.counter
+          ).textContent =
+            "0/" +
+            document.getElementById(
+              setting.input
+            ).maxLength;
+        }
+      );
+    };
+
+
+  /* 作品カード */
+  function createWorkCard(
+    work,
+    showManageButtons = false
+  ) {
+    const imageHtml =
+      work.image
+        ? `
+          <img
+            class="work-cover"
+            src="${work.image}"
+            alt="${escapeHtml(
+              work.title
+            )}"
+          >
+        `
+        : `
+          <div class="placeholder-cover">
+            🎭
+          </div>
+        `;
+
+    const buttonsHtml =
+      showManageButtons
+        ? `
+          <div class="work-actions">
+
+            <button
+              class="work-action"
+              type="button"
+              onclick="editWork('${work.id}')"
+            >
+              編集
+            </button>
+
+            <button
+              class="work-action"
+              type="button"
+              onclick="deleteWork('${work.id}')"
+            >
+              削除
+            </button>
+
+          </div>
+        `
+        : `
+          <div class="work-actions">
+
+            <button
+              class="work-action"
+              type="button"
+              onclick="openWork('${work.id}')"
+            >
+              開く
+            </button>
+
+          </div>
+        `;
+
+    return `
+      <article class="work-card">
+
+        ${imageHtml}
+
+        <div class="work-body">
+
+          <span class="work-genre">
+            ${escapeHtml(
+              work.genre
+            )}
+            　
+            ${escapeHtml(
+              work.status
+            )}
+          </span>
+
+          <h3 class="work-title">
+            ${escapeHtml(
+              work.title
+            )}
+          </h3>
+
+          <p class="work-intro">
+            ${escapeHtml(
+              work.intro
+            )}
+          </p>
+
+          <p class="work-owner">
+            演者：
+            ${escapeHtml(
+              work.ownerName
+            )}
+          </p>
+
+          ${buttonsHtml}
+
+        </div>
+
+      </article>
+    `;
+  }
+
+
+  /* 公開作品だけ */
+  function getPublicWorks(
+    genre = "すべて"
+  ) {
+    return allWorks.filter(
+      function(work) {
+        const isPublic =
+          work.status === "公開";
+
+        const matchesGenre =
+          genre === "すべて" ||
+          work.genre === genre;
+
+        return (
+          isPublic &&
+          matchesGenre
+        );
+      }
+    );
+  }
+
+
+  /* ホーム表示 */
+  function renderHomeWorks() {
+    const works =
+      getPublicWorks(
+        selectedGenre
+      ).slice(0, 6);
+
+    homeWorksTitle.textContent =
+      selectedGenre === "すべて"
+        ? "新着作品"
+        : selectedGenre +
+          "の演目";
+
+    if (!works.length) {
+      homeWorksGrid.innerHTML = `
+        <div class="empty-message">
+          まだ公開作品がありません。
+          <br>
+          「作品を作る」から最初の演目を投稿してみてね。
+        </div>
+      `;
+
+      return;
+    }
+
+    homeWorksGrid.innerHTML =
+      works
+        .map(
+          function(work) {
+            return createWorkCard(
+              work
+            );
+          }
+        )
+        .join("");
+  }
+
+
+  /* 全作品一覧 */
+  window.renderWorks =
+    function(genre) {
+      selectedGenre =
+        genre || "すべて";
+
+      const works =
+        getPublicWorks(
+          selectedGenre
+        );
+
+      if (!works.length) {
+        allWorksGrid.innerHTML = `
+          <div class="empty-message">
+            このジャンルには、
+            まだ公開作品がありません。
+          </div>
+        `;
+
+        return;
+      }
+
+      allWorksGrid.innerHTML =
+        works
+          .map(
+            function(work) {
+              return createWorkCard(
+                work
+              );
+            }
+          )
+          .join("");
+    };
+
+
+  /* マイページ */
+  function renderMyPage() {
+    if (!currentUser) {
+      return;
+    }
+
+    const myWorks =
+      allWorks.filter(
+        function(work) {
+          return (
+            work.ownerId ===
+            currentUser.uid
+          );
+        }
+      );
+
+    postCount.textContent =
+      myWorks.length;
+
+    if (!myWorks.length) {
+      myWorksGrid.innerHTML = `
+        <div class="empty-message">
+          まだ投稿や下書きはありません。
+        </div>
+      `;
+
+      return;
+    }
+
+    myWorksGrid.innerHTML =
+      myWorks
+        .map(
+          function(work) {
+            return createWorkCard(
+              work,
+              true
+            );
+          }
+        )
+        .join("");
+  }
+
+
+  /* ジャンルを押す */
+  window.filterGenre =
+    function(genre) {
+      selectedGenre =
+        genre;
+
+      renderHomeWorks();
+
+      homeWorksGrid.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    };
+
+
+  /* 作品を開く */
+  window.openWork =
+    function(workId) {
+      const work =
+        allWorks.find(
+          function(item) {
+            return (
+              item.id === workId
+            );
+          }
+        );
+
+      if (!work) {
+        alert(
+          "作品が見つかりませんでした。"
+        );
+
+        return;
+      }
+
+      showWorkModal(
+        work,
+        false
+      );
+    };
+
+
+  /* プレビュー */
+  window.previewForm =
+    function() {
+      if (!currentUser) {
+        alert(
+          "ログインしてください。"
+        );
+
+        return;
+      }
+
+      const work =
+        getWorkFormData();
+
+      if (!work.title) {
+        alert(
+          "プレビューには作品タイトルが必要です。"
+        );
+
+        return;
+      }
+
+      showWorkModal(
+        work,
+        true
+      );
+    };
+
+
+  /* 作品詳細 */
+  function showWorkModal(
+    work,
+    isPreview
+  ) {
+    const imageHtml =
+      work.image
+        ? `
+          <img
+            class="modal-cover"
+            src="${work.image}"
+            alt="${escapeHtml(
+              work.title
+            )}"
+          >
+        `
+        : "";
+
+    modalContent.innerHTML = `
+      <h2
+        style="
+          margin-right: 45px;
+          color: var(--lg);
+        "
+      >
+        ${escapeHtml(
+          work.title
+        )}
+      </h2>
+
+      ${imageHtml}
+
+      <p>
+        <span class="work-genre">
+          ${escapeHtml(
+            work.genre
+          )}
+
+          ${
+            isPreview
+              ? "　プレビュー"
+              : ""
+          }
+        </span>
+      </p>
+
+      <p class="modal-text">
+        ${escapeHtml(
+          work.intro
+        )}
+      </p>
+
+      <hr
+        style="
+          border: 0;
+          border-top:
+            1px solid
+            rgba(255, 225, 143, 0.3);
+          margin: 18px 0;
+        "
+      >
+
+      <p class="modal-text">
+        ${escapeHtml(
+          work.story
+        )}
+      </p>
+
+      ${
+        work.greeting
+          ? `
+            <hr
+              style="
+                border: 0;
+                border-top:
+                  1px solid
+                  rgba(
+                    255,
+                    225,
+                    143,
+                    0.3
+                  );
+                margin: 18px 0;
+              "
+            >
+
+            <h3
+              style="
+                color: var(--lg);
+              "
+            >
+              開演
+            </h3>
+
+            <p class="modal-text">
+              ${escapeHtml(
+                work.greeting
+              )}
+            </p>
+          `
+          : ""
+      }
+    `;
+
+    workModal.classList.add(
+      "visible"
+    );
+  }
+
+
+  /* モーダルを閉じる */
+  window.closeModal =
+    function() {
+      workModal.classList.remove(
+        "visible"
+      );
+    };
+
+
+  workModal.addEventListener(
+    "click",
+    function(event) {
+      if (
+        event.target ===
+        workModal
+      ) {
+        closeModal();
+      }
+    }
+  );
+
+
+  /* 編集 */
+  window.editWork =
+    function(workId) {
+      const work =
+        allWorks.find(
+          function(item) {
+            return (
+              item.id === workId
+            );
+          }
+        );
+
+      if (
+        !work ||
+        !currentUser ||
+        work.ownerId !==
+          currentUser.uid
+      ) {
+        alert(
+          "この作品は編集できません。"
+        );
+
+        return;
+      }
+
+      document.getElementById(
+        "editingId"
+      ).value = work.id;
+
+      document.getElementById(
+        "workTitle"
+      ).value =
+        work.title || "";
+
+      document.getElementById(
+        "workGenre"
+      ).value =
+        work.genre || "";
+
+      document.getElementById(
+        "workIntro"
+      ).value =
+        work.intro || "";
+
+      document.getElementById(
+        "workStory"
+      ).value =
+        work.story || "";
+
+      document.getElementById(
+        "workGreeting"
+      ).value =
+        work.greeting || "";
+
+      document.getElementById(
+        "workStatus"
+      ).value =
+        work.status || "公開";
+
+      preparedImage =
+        work.image || "";
+
+      const preview =
+        document.getElementById(
+          "imagePreview"
+        );
+
+      if (preparedImage) {
+        preview.src =
+          preparedImage;
+
+        preview.style.display =
+          "block";
+      } else {
+        preview.removeAttribute(
+          "src"
+        );
+
+        preview.style.display =
+          "none";
+      }
+
+      counterSettings.forEach(
+        function(setting) {
+          const input =
+            document.getElementById(
+              setting.input
+            );
+
+          document.getElementById(
+            setting.counter
+          ).textContent =
+            input.value.length +
+            "/" +
+            input.maxLength;
+        }
+      );
+
+      showPage("create");
+    };
+
+
+  /* 削除 */
+  window.deleteWork =
+    async function(workId) {
+      const work =
+        allWorks.find(
+          function(item) {
+            return (
+              item.id === workId
+            );
+          }
+        );
+
+      if (
+        !work ||
+        !currentUser ||
+        work.ownerId !==
+          currentUser.uid
+      ) {
+        alert(
+          "この作品は削除できません。"
+        );
+
+        return;
+      }
+
+      const confirmed =
+        confirm(
+          "この作品を削除しますか？\nこの操作は元に戻せません。"
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        await deleteDoc(
+          doc(
+            db,
+            "works",
+            workId
+          )
+        );
+
+        alert(
+          "作品を削除しました。"
+        );
+      } catch (error) {
+        console.error(error);
+
+        alert(
+          "作品を削除できませんでした。\n" +
+          getErrorMessage(error)
+        );
+      }
+    };
+
+
+  /* 最初の表示 */
+  setAuthMode("login");
+
+  renderHomeWorks();
+</script>
+
+</body>
+</html>
