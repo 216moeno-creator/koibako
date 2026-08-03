@@ -2090,7 +2090,7 @@ textarea.form-control {
   );
 
 
-  /* Googleログイン */
+    /* Googleログイン */
   googleLoginButton.addEventListener(
     "click",
     async function() {
@@ -2098,39 +2098,18 @@ textarea.form-control {
         authMessage.textContent =
           "Googleログインを開いています…";
 
-        await signInWithPopup(
+        await signInWithRedirect(
           auth,
           googleProvider
         );
-
-        authMessage.textContent = "";
       } catch (error) {
         console.error(error);
-
-        if (
-          error.code === "auth/popup-blocked"
-        ) {
-          try {
-            await signInWithRedirect(
-              auth,
-              googleProvider
-            );
-          } catch (redirectError) {
-            authMessage.textContent =
-              getErrorMessage(
-                redirectError
-              );
-          }
-
-          return;
-        }
 
         authMessage.textContent =
           getErrorMessage(error);
       }
     }
   );
-
 
   /* ログイン状態確認 */
   onAuthStateChanged(
