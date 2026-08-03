@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -754,4 +755,451 @@
       }
 
       .cards {
-       
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .theater-scene {
+        min-height: 440px;
+      }
+
+      .stained-glass {
+        width: 340px;
+        height: 290px;
+      }
+
+      .welcome {
+        padding-top: 315px;
+      }
+
+      .stairs {
+        height: 270px;
+      }
+
+      .red-carpet {
+        height: 210px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 開幕画面 -->
+  <section id="opening">
+    <div class="opening-frame">
+      <div class="opening-ornament">◆ ✦ ◆</div>
+      <h1 class="logo">恋ばこ</h1>
+      <p class="opening-copy">恋を開けば、物語が始まる。</p>
+      <button class="enter-button" id="enterButton">入場する</button>
+    </div>
+  </section>
+
+  <!-- カーテン -->
+  <div id="curtainLayer">
+    <div class="curtain-top"></div>
+    <div class="curtain curtain-left"></div>
+    <div class="curtain curtain-right"></div>
+  </div>
+
+  <!-- アプリ本体 -->
+  <main id="app">
+    <div class="lobby" id="lobby">
+      <div class="lobby-content">
+
+        <header class="topbar">
+          <div class="mini-logo">恋ばこ</div>
+          <div class="time-label" id="timeLabel">劇場準備中</div>
+        </header>
+
+        <!-- ホーム -->
+        <section id="page-home" class="page active">
+
+          <div class="chandelier-area">
+            <div class="chain"></div>
+            <div class="chandelier">
+              <div class="chandelier-center"></div>
+              <div class="arm left"></div>
+              <div class="arm right"></div>
+              <div class="lamp l1"></div>
+              <div class="lamp l2"></div>
+              <div class="lamp l3"></div>
+              <div class="lamp l4"></div>
+              <div class="lamp l5"></div>
+            </div>
+          </div>
+
+          <div class="theater-scene">
+            <div class="stained-glass"></div>
+
+            <div class="stairs">
+              <div class="stair-left"></div>
+              <div class="stair-right"></div>
+              <div class="rail left"></div>
+              <div class="rail right"></div>
+              <div class="red-carpet"></div>
+            </div>
+
+            <div class="welcome">
+              <h1>おかえりなさい</h1>
+              <p>
+                ここは、恋と夢と希望が集まる劇場。<br>
+                今日は、どんな物語を始めますか？
+              </p>
+            </div>
+          </div>
+
+          <section class="section">
+            <h2 class="section-title">本日の演目</h2>
+            <p class="section-subtitle">新しい物語は、ここから始まります。</p>
+
+            <div class="cards">
+              <article class="show-card">
+                <span class="icon">🌹</span>
+                <strong>恋</strong>
+                <small>甘い恋、秘密の恋、運命の恋</small>
+                <span class="coming">COMING SOON</span>
+              </article>
+
+              <article class="show-card">
+                <span class="icon">🎭</span>
+                <strong>夢</strong>
+                <small>舞台・音楽・夢を追う物語</small>
+                <span class="coming">COMING SOON</span>
+              </article>
+
+              <article class="show-card">
+                <span class="icon">🌟</span>
+                <strong>希望</strong>
+                <small>新しい一歩を後押しする物語</small>
+                <span class="coming">COMING SOON</span>
+              </article>
+
+              <article class="show-card">
+                <span class="icon">🪽</span>
+                <strong>癒やし</strong>
+                <small>一人ではないと思える時間</small>
+                <span class="coming">COMING SOON</span>
+              </article>
+
+              <article class="show-card">
+                <span class="icon">🦇</span>
+                <strong>人外</strong>
+                <small>吸血鬼・悪魔・天使・人狼</small>
+                <span class="coming">COMING SOON</span>
+              </article>
+
+              <article class="show-card">
+                <span class="icon">👑</span>
+                <strong>ファンタジー</strong>
+                <small>王子様や異世界で始まる恋</small>
+                <span class="coming">COMING SOON</span>
+              </article>
+
+              <article class="show-card">
+                <span class="icon">🏫</span>
+                <strong>学園</strong>
+                <small>青春と放課後の恋物語</small>
+                <span class="coming">COMING SOON</span>
+              </article>
+
+              <article class="show-card">
+                <span class="icon">🎤</span>
+                <strong>推し</strong>
+                <small>憧れが明日を照らす物語</small>
+                <span class="coming">COMING SOON</span>
+              </article>
+            </div>
+          </section>
+
+          <div class="message-box">
+            <h3>今日の言葉</h3>
+            <p id="dailyMessage">
+              夢は一日では叶わない。<br>
+              でも、一歩は今日踏み出せる。
+            </p>
+          </div>
+        </section>
+
+        <!-- 作品一覧 -->
+        <section id="page-works" class="page simple-page">
+          <div class="page-heading">
+            <h2>演目一覧</h2>
+            <p>あなたを待っている物語が、ここに並びます。</p>
+          </div>
+
+          <div class="panel">
+            <h3>公開作品</h3>
+            <p>まだ演目はありません。最初の物語を準備しています。</p>
+          </div>
+
+          <div class="panel">
+            <h3>探す</h3>
+            <input type="search" placeholder="作品名・キャラクター名・タグ">
+          </div>
+        </section>
+
+        <!-- 作品作成 -->
+        <section id="page-create" class="page simple-page">
+          <div class="page-heading">
+            <h2>作品を作る</h2>
+            <p>あなたの物語を、この劇場の新しい演目に。</p>
+          </div>
+
+          <div class="panel">
+            <label>
+              作品タイトル
+              <input id="workTitle" type="text" placeholder="例：夢を歌う君へ">
+            </label>
+
+            <label>
+              キャラクター名
+              <input id="characterName" type="text" placeholder="キャラクター名">
+            </label>
+
+            <label>
+              ジャンル
+              <select id="genre">
+                <option>恋</option>
+                <option>夢</option>
+                <option>希望</option>
+                <option>癒やし</option>
+                <option>人外</option>
+                <option>ファンタジー</option>
+                <option>学園</option>
+                <option>推し</option>
+              </select>
+            </label>
+
+            <label>
+              キャラクター設定
+              <textarea id="characterSetting" placeholder="性格、口調、背景など"></textarea>
+            </label>
+
+            <label>
+              最初の一言
+              <textarea id="firstMessage" placeholder="物語の始まりを書く"></textarea>
+            </label>
+
+            <button class="gold-button" id="draftButton">下書きを保存</button>
+          </div>
+
+          <div class="panel">
+            <h3>保存状況</h3>
+            <p id="saveStatus">まだ下書きはありません。</p>
+          </div>
+        </section>
+
+        <!-- マイページ -->
+        <section id="page-mypage" class="page simple-page">
+          <div class="page-heading">
+            <h2>マイページ</h2>
+            <p>あなたの思い出と物語を大切に保管します。</p>
+          </div>
+
+          <div class="panel">
+            <h3>プロフィール</h3>
+            <p>ログイン機能は今後追加予定です。</p>
+          </div>
+
+          <div class="panel">
+            <h3>お気に入り</h3>
+            <p>好きな作品やキャラクターを保存できるようになります。</p>
+          </div>
+
+          <div class="panel">
+            <h3>セーブデータ</h3>
+            <p>物語の続きを、いつでもここから再開できるようになります。</p>
+          </div>
+        </section>
+
+        <!-- 設定 -->
+        <section id="page-settings" class="page simple-page">
+          <div class="page-heading">
+            <h2>劇場設定</h2>
+            <p>恋ばこを、あなたが過ごしやすい場所へ。</p>
+          </div>
+
+          <div class="panel">
+            <label>
+              文字サイズ
+              <select id="fontSizeSelect">
+                <option value="normal">標準</option>
+                <option value="large">大きめ</option>
+              </select>
+            </label>
+
+            <label>
+              効果音
+              <select>
+                <option>オン</option>
+                <option>オフ</option>
+              </select>
+            </label>
+
+            <label>
+              BGM
+              <select>
+                <option>オン</option>
+                <option>オフ</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="nav-button active" data-page="home">
+        <span>🏛️</span>ホーム
+      </button>
+
+      <button class="nav-button" data-page="works">
+        <span>🎭</span>演目
+      </button>
+
+      <button class="nav-button" data-page="create">
+        <span>✍️</span>作る
+      </button>
+
+      <button class="nav-button" data-page="mypage">
+        <span>🌹</span>マイページ
+      </button>
+
+      <button class="nav-button" data-page="settings">
+        <span>⚙️</span>設定
+      </button>
+    </nav>
+  </main>
+
+  <script>
+    const opening = document.getElementById("opening");
+    const curtainLayer = document.getElementById("curtainLayer");
+    const app = document.getElementById("app");
+    const enterButton = document.getElementById("enterButton");
+
+    enterButton.addEventListener("click", () => {
+      curtainLayer.classList.add("active");
+
+      setTimeout(() => {
+        opening.classList.add("hidden");
+        app.classList.add("visible");
+      }, 180);
+
+      setTimeout(() => {
+        curtainLayer.classList.add("open");
+      }, 360);
+
+      setTimeout(() => {
+        curtainLayer.classList.remove("active", "open");
+      }, 2100);
+    });
+
+    /* ナビゲーション */
+    const navButtons = document.querySelectorAll(".nav-button");
+    const pages = document.querySelectorAll(".page");
+
+    navButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        const pageName = button.dataset.page;
+
+        navButtons.forEach(item => item.classList.remove("active"));
+        pages.forEach(page => page.classList.remove("active"));
+
+        button.classList.add("active");
+        document.getElementById(`page-${pageName}`).classList.add("active");
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+
+    /* 時間帯によってロビーを変化 */
+    function updateLobbyTime() {
+      const lobby = document.getElementById("lobby");
+      const timeLabel = document.getElementById("timeLabel");
+      const hour = new Date().getHours();
+
+      lobby.classList.remove(
+        "time-morning",
+        "time-evening",
+        "time-night"
+      );
+
+      if (hour >= 5 && hour < 12) {
+        lobby.classList.add("time-morning");
+        timeLabel.textContent = "朝の劇場";
+      } else if (hour >= 12 && hour < 17) {
+        timeLabel.textContent = "昼の劇場";
+      } else if (hour >= 17 && hour < 20) {
+        lobby.classList.add("time-evening");
+        timeLabel.textContent = "夕暮れの劇場";
+      } else {
+        lobby.classList.add("time-night");
+        timeLabel.textContent = "夜の劇場";
+      }
+    }
+
+    updateLobbyTime();
+
+    /* 今日の言葉 */
+    const dailyMessages = [
+      "夢は一日では叶わない。<br>でも、一歩は今日踏み出せる。",
+      "今日ここへ来てくれたことも、<br>あなたの物語の大切な一幕です。",
+      "立ち止まる日があってもいい。<br>物語は、まだ終わっていない。",
+      "あなたは一人ではありません。<br>この劇場は、いつでも待っています。",
+      "推しからもらった勇気は、<br>いつか誰かへ渡す光になる。",
+      "生きて今日を迎えたこと。<br>それだけでも、十分に素晴らしい。",
+      "なりたい自分へ向かう道は、<br>小さな積み重ねから始まります。"
+    ];
+
+    const today = new Date().getDate();
+    document.getElementById("dailyMessage").innerHTML =
+      dailyMessages[today % dailyMessages.length];
+
+    /* 下書き保存 */
+    const draftButton = document.getElementById("draftButton");
+    const saveStatus = document.getElementById("saveStatus");
+
+    draftButton.addEventListener("click", () => {
+      const draft = {
+        title: document.getElementById("workTitle").value,
+        characterName: document.getElementById("characterName").value,
+        genre: document.getElementById("genre").value,
+        setting: document.getElementById("characterSetting").value,
+        firstMessage: document.getElementById("firstMessage").value,
+        savedAt: new Date().toLocaleString("ja-JP")
+      };
+
+      localStorage.setItem("koibakoDraft", JSON.stringify(draft));
+      saveStatus.textContent = `下書きを保存しました：${draft.savedAt}`;
+    });
+
+    /* 保存済み下書きを復元 */
+    const savedDraft = localStorage.getItem("koibakoDraft");
+
+    if (savedDraft) {
+      const draft = JSON.parse(savedDraft);
+
+      document.getElementById("workTitle").value = draft.title || "";
+      document.getElementById("characterName").value =
+        draft.characterName || "";
+      document.getElementById("genre").value = draft.genre || "恋";
+      document.getElementById("characterSetting").value =
+        draft.setting || "";
+      document.getElementById("firstMessage").value =
+        draft.firstMessage || "";
+
+      saveStatus.textContent =
+        `保存済みの下書きがあります：${draft.savedAt}`;
+    }
+
+    /* 文字サイズ */
+    document
+      .getElementById("fontSizeSelect")
+      .addEventListener("change", event => {
+        document.documentElement.style.fontSize =
+          event.target.value === "large" ? "19px" : "16px";
+      });
+  </script>
+</body>
+</html>
