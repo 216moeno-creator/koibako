@@ -1,142 +1,1010 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
 
-<title>恋ばこ</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
 
-<style>
+  <meta name="theme-color" content="#420014">
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
-}
+  <title>恋ばこ</title>
 
-body{
+  <link
+    rel="icon"
+    href="file_000000006e8882119118b07309fcc222.png"
+  >
 
-background:url("title.jpg") center center / cover no-repeat;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
+  <link
+    rel="apple-touch-icon"
+    href="file_000000006e8882119118b07309fcc222.png"
+  >
 
-}
+  <style>
+    :root {
+      --wine-dark: #210008;
+      --wine: #520018;
+      --wine-light: #8f1637;
+      --gold: #d9aa46;
+      --gold-light: #fff0a4;
+      --cream: #fff7df;
+    }
 
-.overlay{
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-width:100%;
-height:100%;
-background:rgba(0,0,0,.45);
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: var(--wine-dark);
+      color: var(--cream);
+      font-family:
+        "Yu Mincho",
+        "Hiragino Mincho ProN",
+        "Noto Serif JP",
+        serif;
+    }
 
-display:flex;
-justify-content:center;
-align-items:center;
+    body {
+      overflow-x: hidden;
+    }
 
-}
+    button {
+      font: inherit;
+    }
 
-.box{
+    /* =========================
+       タイトル画面
+    ========================= */
 
-text-align:center;
-color:white;
-padding:20px;
+    #opening {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100svh;
+      padding:
+        max(22px, env(safe-area-inset-top))
+        20px
+        max(24px, env(safe-area-inset-bottom));
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 35%,
+          rgba(173, 35, 75, 0.65),
+          transparent 38%
+        ),
+        linear-gradient(
+          180deg,
+          #760020 0%,
+          #470013 50%,
+          #210008 100%
+        );
+      transition:
+        opacity 0.7s ease,
+        visibility 0.7s ease;
+    }
 
-}
+    #opening::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.34;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.035) 0,
+          rgba(255, 255, 255, 0.035) 2px,
+          transparent 2px,
+          transparent 42px
+        ),
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(255, 224, 134, 0.23),
+          transparent 46%
+        );
+    }
 
-.logo{
+    #opening.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
 
-font-size:64px;
-font-weight:bold;
-color:#f6d36b;
-text-shadow:0 0 18px gold;
+    .opening-frame {
+      position: relative;
+      z-index: 2;
+      width: min(90vw, 500px);
+      padding: 34px 24px 30px;
+      text-align: center;
+      border: 2px solid var(--gold);
+      border-radius: 30px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.08),
+          rgba(255, 255, 255, 0.015)
+        );
+      box-shadow:
+        0 0 0 7px rgba(218, 171, 72, 0.09),
+        0 26px 80px rgba(0, 0, 0, 0.52),
+        inset 0 0 32px rgba(255, 223, 131, 0.08);
+      backdrop-filter: blur(3px);
+    }
 
-}
+    .opening-frame::before,
+    .opening-frame::after {
+      content: "✦";
+      position: absolute;
+      top: 12px;
+      color: var(--gold-light);
+      font-size: 18px;
+      text-shadow: 0 0 12px var(--gold-light);
+    }
 
-.sub{
+    .opening-frame::before {
+      left: 18px;
+    }
 
-margin-top:15px;
-font-size:18px;
-letter-spacing:3px;
+    .opening-frame::after {
+      right: 18px;
+    }
 
-}
+    .logo-image {
+      display: block;
+      width: min(66vw, 280px);
+      aspect-ratio: 1;
+      margin: 0 auto 15px;
+      object-fit: contain;
+      border-radius: 24px;
+      filter:
+        drop-shadow(0 7px 13px rgba(0, 0, 0, 0.45))
+        drop-shadow(0 0 15px rgba(255, 219, 104, 0.26));
+    }
 
-.notice{
+    .catch-copy {
+      margin: 7px 0 0;
+      color: #fff5e5;
+      font-size: clamp(16px, 4.3vw, 20px);
+      line-height: 1.8;
+      letter-spacing: 0.11em;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+    }
 
-margin-top:60px;
-font-size:14px;
-color:#ffe7a4;
+    .sound-notice {
+      margin: 25px 0 0;
+      color: #ffe8a7;
+      font-size: 13px;
+      line-height: 1.75;
+      letter-spacing: 0.05em;
+    }
 
-}
+    #enterButton {
+      position: relative;
+      display: block;
+      min-width: 210px;
+      margin: 18px auto 0;
+      padding: 17px 35px;
+      overflow: hidden;
+      border: 1px solid #fff2b1;
+      border-radius: 999px;
+      color: #4b0013;
+      background:
+        linear-gradient(
+          180deg,
+          #fff6c5 0%,
+          #efcf6b 45%,
+          #c98d1f 100%
+        );
+      box-shadow:
+        0 11px 28px rgba(0, 0, 0, 0.42),
+        0 0 22px rgba(255, 223, 111, 0.55),
+        inset 0 2px 3px rgba(255, 255, 255, 0.9);
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      cursor: pointer;
+      transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+    }
 
-button{
+    #enterButton::before {
+      content: "";
+      position: absolute;
+      top: -90%;
+      left: -50%;
+      width: 40%;
+      height: 280%;
+      transform: rotate(25deg);
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.92),
+          transparent
+        );
+      animation: buttonShine 2.7s infinite;
+    }
 
-margin-top:20px;
+    #enterButton:active {
+      transform: scale(0.95);
+      filter: brightness(1.22);
+    }
 
-width:230px;
-height:65px;
+    #enterButton.clicked {
+      animation: buttonFlash 0.7s ease;
+    }
 
-border:none;
-border-radius:50px;
+    @keyframes buttonShine {
+      0% {
+        left: -55%;
+      }
 
-font-size:24px;
-font-weight:bold;
+      55%,
+      100% {
+        left: 125%;
+      }
+    }
 
-color:#4b0000;
+    @keyframes buttonFlash {
+      0% {
+        transform: scale(1);
+      }
 
-background:linear-gradient(#fff2a8,#d8a52e);
+      45% {
+        transform: scale(1.08);
+        filter: brightness(1.6);
+      }
 
-box-shadow:0 0 20px gold;
+      100% {
+        transform: scale(1);
+      }
+    }
 
-cursor:pointer;
+    /* =========================
+       ロビー
+    ========================= */
 
-transition:.3s;
+    #lobby {
+      position: relative;
+      display: none;
+      min-height: 100svh;
+      overflow: hidden;
+      background: #160008;
+    }
 
-}
+    #lobby.visible {
+      display: block;
+    }
 
-button:hover{
+    .lobby-hero {
+      position: relative;
+      min-height: 100svh;
+      padding:
+        max(18px, env(safe-area-inset-top))
+        17px
+        100px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.12),
+          rgba(20, 0, 7, 0.25)
+        ),
+        url("file_00000000187481f897c170cd1a77aa0f.png")
+        center top / cover no-repeat;
+    }
 
-transform:scale(1.05);
+    .lobby-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.08) 0%,
+          transparent 42%,
+          rgba(22, 0, 8, 0.87) 100%
+        );
+    }
 
-box-shadow:0 0 35px gold;
+    .lobby-content {
+      position: relative;
+      z-index: 3;
+      width: min(100%, 1100px);
+      min-height: calc(100svh - 120px);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
 
-}
+    .lobby-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
 
-</style>
+    .lobby-title {
+      margin: 0;
+      color: #fff0ad;
+      font-size: clamp(27px, 7vw, 44px);
+      letter-spacing: 0.08em;
+      text-shadow:
+        0 3px 4px rgba(0, 0, 0, 0.9),
+        0 0 16px rgba(255, 219, 118, 0.55);
+    }
 
+    .currency {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border: 1px solid rgba(255, 225, 145, 0.72);
+      border-radius: 999px;
+      background: rgba(31, 0, 14, 0.76);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(8px);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .welcome-panel {
+      margin-top: auto;
+      padding: 23px 18px;
+      border: 1px solid rgba(255, 225, 145, 0.72);
+      border-radius: 22px;
+      text-align: center;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(65, 0, 27, 0.89),
+          rgba(17, 0, 9, 0.83)
+        );
+      box-shadow:
+        0 22px 50px rgba(0, 0, 0, 0.55),
+        inset 0 0 25px rgba(255, 220, 120, 0.06);
+      backdrop-filter: blur(6px);
+    }
+
+    .welcome-panel h2 {
+      margin: 0;
+      color: #ffe9a3;
+      font-size: clamp(28px, 8vw, 46px);
+      letter-spacing: 0.1em;
+      text-shadow:
+        0 3px 4px #000,
+        0 0 13px rgba(255, 219, 112, 0.52);
+    }
+
+    .welcome-panel p {
+      margin: 12px 0 0;
+      color: #fff7e6;
+      font-size: 15px;
+      line-height: 1.9;
+      text-shadow: 0 2px 4px #000;
+    }
+
+    .genre-button {
+      display: block;
+      width: min(100%, 310px);
+      margin: 18px auto 0;
+      padding: 15px 18px;
+      border: 1px solid #fff1ad;
+      border-radius: 999px;
+      color: #400011;
+      background:
+        linear-gradient(
+          180deg,
+          #fff6c2,
+          #dfb441 58%,
+          #bc7b16
+        );
+      box-shadow:
+        0 8px 23px rgba(0, 0, 0, 0.38),
+        0 0 20px rgba(255, 221, 107, 0.45);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .genre-button:active {
+      transform: scale(0.96);
+    }
+
+    /* =========================
+       ジャンル一覧
+    ========================= */
+
+    #genreSection {
+      position: relative;
+      z-index: 4;
+      padding:
+        34px 13px
+        calc(105px + env(safe-area-inset-bottom));
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(143, 22, 55, 0.72),
+          transparent 42%
+        ),
+        linear-gradient(
+          180deg,
+          #31000f,
+          #160008
+        );
+    }
+
+    .section-heading {
+      margin: 0 0 19px;
+      text-align: center;
+      color: #ffe7a1;
+      font-size: clamp(28px, 7vw, 43px);
+      letter-spacing: 0.09em;
+      text-shadow:
+        0 3px 5px #000,
+        0 0 12px rgba(255, 220, 120, 0.48);
+    }
+
+    .genre-image-frame {
+      width: min(100%, 1100px);
+      margin: 0 auto;
+      padding: 5px;
+      border: 1px solid rgba(255, 224, 133, 0.74);
+      border-radius: 18px;
+      background: rgba(255, 221, 125, 0.06);
+      box-shadow:
+        0 18px 55px rgba(0, 0, 0, 0.58),
+        0 0 25px rgba(255, 208, 80, 0.14);
+    }
+
+    .genre-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 13px;
+    }
+
+    .genre-note {
+      width: min(100%, 900px);
+      margin: 18px auto 0;
+      padding: 16px;
+      border: 1px solid rgba(255, 226, 145, 0.45);
+      border-radius: 16px;
+      color: #f9e9cf;
+      background: rgba(39, 0, 18, 0.82);
+      text-align: center;
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    /* =========================
+       カーテン演出
+    ========================= */
+
+    #curtainScene {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      visibility: hidden;
+      overflow: hidden;
+      pointer-events: none;
+      background:
+        url("file_00000000187481f897c170cd1a77aa0f.png")
+        center / cover no-repeat;
+    }
+
+    #curtainScene.show {
+      visibility: visible;
+    }
+
+    .curtain-half {
+      position: absolute;
+      top: 0;
+      width: 50.5%;
+      height: 100%;
+      background-image:
+        url("file_00000000b9e882098d876c32a84ee89d.png");
+      background-repeat: no-repeat;
+      background-size: 200% 100%;
+      filter:
+        saturate(1.08)
+        contrast(1.05)
+        drop-shadow(0 0 18px rgba(0, 0, 0, 0.8));
+      transition:
+        transform 2.25s cubic-bezier(0.62, 0.02, 0.24, 1);
+    }
+
+    .curtain-left {
+      left: 0;
+      background-position: left center;
+      transform-origin: left center;
+    }
+
+    .curtain-right {
+      right: 0;
+      background-position: right center;
+      transform-origin: right center;
+    }
+
+    #curtainScene.open .curtain-left {
+      transform: translateX(-99%);
+    }
+
+    #curtainScene.open .curtain-right {
+      transform: translateX(99%);
+    }
+
+    #sparkles {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      overflow: hidden;
+    }
+
+    .sparkle {
+      position: absolute;
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      opacity: 0;
+      background: #fff7b3;
+      box-shadow:
+        0 0 7px #fff,
+        0 0 16px #ffd44d,
+        0 0 28px #ffec94;
+      animation: sparkleRise 1.8s ease-out forwards;
+    }
+
+    @keyframes sparkleRise {
+      0% {
+        opacity: 0;
+        transform:
+          translateY(30px)
+          scale(0.2)
+          rotate(0deg);
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform:
+          translateY(-150px)
+          scale(1.8)
+          rotate(220deg);
+      }
+    }
+
+    .opening-message {
+      position: absolute;
+      left: 50%;
+      bottom: 12%;
+      z-index: 9;
+      width: min(84%, 500px);
+      padding: 14px 18px;
+      transform: translateX(-50%);
+      border: 1px solid rgba(255, 239, 174, 0.58);
+      border-radius: 999px;
+      color: #fff1bd;
+      background: rgba(30, 0, 13, 0.68);
+      text-align: center;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      backdrop-filter: blur(7px);
+      animation: messageAppear 2.2s ease forwards;
+    }
+
+    @keyframes messageAppear {
+      0%,
+      20% {
+        opacity: 0;
+      }
+
+      55%,
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* =========================
+       下部ナビ
+    ========================= */
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      width: min(100%, 1100px);
+      transform: translateX(-50%);
+      border-top: 1px solid rgba(255, 226, 141, 0.5);
+      background: rgba(42, 0, 17, 0.94);
+      backdrop-filter: blur(15px);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .nav-button {
+      min-height: 69px;
+      padding: 7px 2px;
+      border: 0;
+      color: #d9c6cd;
+      background: transparent;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .nav-button span {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 23px;
+    }
+
+    .nav-button.active {
+      color: #ffe594;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255, 216, 93, 0.15),
+          transparent
+        );
+    }
+
+    @media (min-width: 760px) {
+      .opening-frame {
+        padding: 38px 40px 34px;
+      }
+
+      .lobby-hero {
+        background-position: center 28%;
+      }
+
+      .welcome-panel {
+        width: min(680px, 86%);
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .currency {
+        font-size: 14px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="overlay">
+  <!-- タイトル画面 -->
+  <section id="opening">
 
-<div class="box">
+    <div class="opening-frame">
 
-<div class="logo">
-恋ばこ
-</div>
+      <img
+        class="logo-image"
+        src="file_000000006e8882119118b07309fcc222.png"
+        alt="恋ばこ"
+      >
 
-<div class="sub">
-恋を開けば、物語が始まる。
-</div>
+      <p class="catch-copy">
+        恋を開けば、物語が始まる。
+      </p>
 
-<div class="notice">
+      <p class="sound-notice">
+        🔊 音声演出が再生されます。<br>
+        音量にご注意ください。
+      </p>
 
-🔊 音声演出が再生されます。<br>
-音量にご注意ください。
+      <button id="enterButton" type="button">
+        入場する
+      </button>
 
-</div>
+    </div>
 
-<button>
+  </section>
 
-入場する
 
-</button>
+  <!-- カーテン演出 -->
+  <section id="curtainScene">
 
-</div>
+    <div class="curtain-half curtain-left"></div>
+    <div class="curtain-half curtain-right"></div>
 
-</div>
+    <div id="sparkles"></div>
+
+    <div class="opening-message">
+      まもなく、恋ばこ劇場の幕が上がります
+    </div>
+
+  </section>
+
+
+  <!-- ロビー -->
+  <main id="lobby">
+
+    <section class="lobby-hero">
+
+      <div class="lobby-content">
+
+        <header class="lobby-header">
+
+          <h1 class="lobby-title">
+            恋ばこ
+          </h1>
+
+          <div class="currency">
+            ⭐ 100
+            &nbsp;🌹 0
+            &nbsp;💎 ―
+          </div>
+
+        </header>
+
+        <section class="welcome-panel">
+
+          <h2>
+            おかえりなさい
+          </h2>
+
+          <p>
+            ここは、恋と夢と希望が集まる劇場。<br>
+            今日も、あなたの物語が始まります。
+          </p>
+
+          <button
+            class="genre-button"
+            id="showGenresButton"
+            type="button"
+          >
+            本日の演目を見る
+          </button>
+
+        </section>
+
+      </div>
+
+    </section>
+
+
+    <!-- ジャンル -->
+    <section id="genreSection">
+
+      <h2 class="section-heading">
+        本日の演目
+      </h2>
+
+      <div class="genre-image-frame">
+
+        <img
+          class="genre-image"
+          src="file_000000001dfc81faa94b0f333e4b01fe.png"
+          alt="恋ばこのジャンル一覧"
+        >
+
+      </div>
+
+      <p class="genre-note">
+        🌹恋・🌈夢・⭐希望・🌙癒やし・😈ホラー・🦇ミステリー・
+        ❤️女性向け・💙男性向け・🤍その他。<br>
+        作品機能は、これから一つずつ開演していきます。
+      </p>
+
+    </section>
+
+
+    <!-- 下部メニュー -->
+    <nav class="bottom-nav">
+
+      <button class="nav-button active" type="button">
+        <span>🏛️</span>
+        ホーム
+      </button>
+
+      <button class="nav-button" type="button">
+        <span>📖</span>
+        作品一覧
+      </button>
+
+      <button class="nav-button" type="button">
+        <span>✍️</span>
+        作品を作る
+      </button>
+
+      <button class="nav-button" type="button">
+        <span>🌹</span>
+        マイページ
+      </button>
+
+      <button class="nav-button" type="button">
+        <span>⚙️</span>
+        設定
+      </button>
+
+    </nav>
+
+  </main>
+
+
+  <script>
+    const opening = document.getElementById("opening");
+    const enterButton = document.getElementById("enterButton");
+    const curtainScene = document.getElementById("curtainScene");
+    const sparkles = document.getElementById("sparkles");
+    const lobby = document.getElementById("lobby");
+    const showGenresButton =
+      document.getElementById("showGenresButton");
+
+    let entering = false;
+
+
+    function speakAnnouncement() {
+      if (!("speechSynthesis" in window)) {
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const text =
+        "皆さま、本日は恋ばこ劇場へお越しいただき、ありがとうございます。まもなく、物語の幕が上がります。どうぞ、ごゆっくりお楽しみください。";
+
+      const speech =
+        new SpeechSynthesisUtterance(text);
+
+      speech.lang = "ja-JP";
+      speech.rate = 0.88;
+      speech.pitch = 1.04;
+      speech.volume = 1;
+
+      const voices =
+        window.speechSynthesis.getVoices();
+
+      const japaneseVoice =
+        voices.find((voice) =>
+          voice.lang &&
+          voice.lang.toLowerCase().startsWith("ja")
+        );
+
+      if (japaneseVoice) {
+        speech.voice = japaneseVoice;
+      }
+
+      window.speechSynthesis.speak(speech);
+    }
+
+
+    function createSparkles() {
+      sparkles.innerHTML = "";
+
+      for (let i = 0; i < 70; i += 1) {
+        const sparkle =
+          document.createElement("span");
+
+        sparkle.className = "sparkle";
+
+        sparkle.style.left =
+          `${Math.random() * 100}%`;
+
+        sparkle.style.top =
+          `${18 + Math.random() * 78}%`;
+
+        sparkle.style.animationDelay =
+          `${Math.random() * 1.1}s`;
+
+        sparkle.style.animationDuration =
+          `${1.1 + Math.random() * 1.4}s`;
+
+        const size =
+          4 + Math.random() * 8;
+
+        sparkle.style.width =
+          `${size}px`;
+
+        sparkle.style.height =
+          `${size}px`;
+
+        sparkles.appendChild(sparkle);
+      }
+    }
+
+
+    function enterTheater() {
+      if (entering) {
+        return;
+      }
+
+      entering = true;
+
+      enterButton.classList.add("clicked");
+
+      speakAnnouncement();
+      createSparkles();
+
+      lobby.classList.add("visible");
+      curtainScene.classList.add("show");
+
+      setTimeout(() => {
+        opening.classList.add("hide");
+      }, 250);
+
+      setTimeout(() => {
+        curtainScene.classList.add("open");
+      }, 850);
+
+      setTimeout(() => {
+        curtainScene.classList.remove(
+          "show",
+          "open"
+        );
+
+        sparkles.innerHTML = "";
+
+        window.scrollTo({
+          top: 0,
+          behavior: "instant"
+        });
+      }, 3350);
+    }
+
+
+    enterButton.addEventListener(
+      "click",
+      enterTheater
+    );
+
+
+    showGenresButton.addEventListener(
+      "click",
+      () => {
+        document
+          .getElementById("genreSection")
+          .scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+      }
+    );
+
+
+    document
+      .querySelectorAll(".nav-button")
+      .forEach((button) => {
+        button.addEventListener("click", () => {
+          document
+            .querySelectorAll(".nav-button")
+            .forEach((item) => {
+              item.classList.remove("active");
+            });
+
+          button.classList.add("active");
+        });
+      });
+  </script>
 
 </body>
 </html>
