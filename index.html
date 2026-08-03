@@ -1,716 +1,1020 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  >
-  <meta name="theme-color" content="#35000f">
-  <title>恋ばこ｜劇場ロビー</title>
-
-  <style>
-    :root {
-      --wine: #690020;
-      --deep-wine: #31000f;
-      --dark: #160007;
-      --gold: #d8a638;
-      --light-gold: #ffe7a1;
-      --cream: #fff9eb;
-      --line: rgba(255, 223, 135, 0.7);
-      --panel: rgba(48, 0, 16, 0.92);
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      padding-bottom: 86px;
-      color: var(--cream);
-      background:
-        linear-gradient(rgba(20, 0, 8, 0.05), rgba(20, 0, 8, 0.88)),
-        url("file_00000000187481f897c170cd1a77aa0f.png")
-        center top / cover fixed no-repeat;
-      font-family:
-        "Yu Mincho",
-        "Hiragino Mincho ProN",
-        "Noto Serif JP",
-        serif;
-    }
-
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    img {
-      max-width: 100%;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* 上部 */
-    .top-bar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 62px;
-      padding:
-        max(10px, env(safe-area-inset-top))
-        14px
-        10px;
-      background: rgba(43, 0, 15, 0.94);
-      border-bottom: 1px solid var(--line);
-      backdrop-filter: blur(12px);
-    }
-
-    .top-logo {
-      color: var(--light-gold);
-      font-size: 26px;
-      font-weight: bold;
-      letter-spacing: 0.08em;
-      text-shadow: 0 0 14px rgba(255, 216, 103, 0.4);
-    }
-
-    .currency {
-      padding: 8px 13px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: var(--light-gold);
-      background: rgba(30, 0, 10, 0.78);
-      white-space: nowrap;
-      font-size: 14px;
-    }
-
-    /* ロビー */
-    .hero {
-      position: relative;
-      min-height: 69vh;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 26px 18px 34px;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(
-          circle at 50% 12%,
-          rgba(255, 238, 178, 0.35),
-          transparent 28%
-        );
-      animation: chandelierGlow 4s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @keyframes chandelierGlow {
-      0%, 100% {
-        opacity: 0.55;
-      }
-      50% {
-        opacity: 1;
-      }
-    }
-
-    .spark {
-      position: absolute;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #fff1a8;
-      box-shadow:
-        0 0 8px #fff,
-        0 0 17px #ffd45d;
-      animation: floatSpark 5s linear infinite;
-      opacity: 0;
-    }
-
-    @keyframes floatSpark {
-      0% {
-        opacity: 0;
-        transform: translateY(70px) scale(0.4);
-      }
-      20% {
-        opacity: 0.9;
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(-260px) scale(1.3);
-      }
-    }
-
-    .welcome-card {
-      position: relative;
-      z-index: 2;
-      width: min(100%, 650px);
-      padding: 25px 18px;
-      text-align: center;
-      border: 1px solid var(--line);
-      border-radius: 30px;
-      background:
-        linear-gradient(
-          145deg,
-          rgba(91, 0, 31, 0.94),
-          rgba(30, 0, 10, 0.96)
-        );
-      box-shadow:
-        0 20px 55px rgba(0, 0, 0, 0.56),
-        inset 0 0 28px rgba(255, 222, 126, 0.06);
-    }
-
-    .welcome-card h1 {
-      margin: 0;
-      color: var(--light-gold);
-      font-size: clamp(33px, 9vw, 52px);
-      letter-spacing: 0.1em;
-      text-shadow:
-        0 3px 8px rgba(0, 0, 0, 0.8),
-        0 0 17px rgba(255, 216, 105, 0.35);
-    }
-
-    .welcome-card p {
-      margin: 16px 0 21px;
-      font-size: 15px;
-      line-height: 1.95;
-      letter-spacing: 0.03em;
-    }
-
-    .keep-together {
-      white-space: nowrap;
-    }
-
-    .gold-button {
-      min-width: 210px;
-      padding: 15px 24px;
-      border: 1px solid #fff1af;
-      border-radius: 999px;
-      color: #500016;
-      background:
-        linear-gradient(
-          #fff7c8,
-          #ecc553 55%,
-          #b97512
-        );
-      box-shadow:
-        0 10px 25px rgba(0, 0, 0, 0.42),
-        0 0 22px rgba(255, 220, 106, 0.32);
-      font-size: 17px;
-      font-weight: bold;
-      letter-spacing: 0.08em;
-    }
-
-    .gold-button:active {
-      transform: scale(0.97);
-    }
-
-    /* ページ共通 */
-    .page {
-      width: min(100%, 950px);
-      margin: 0 auto;
-      padding: 20px 15px 38px;
-    }
-
-    .section {
-      margin: 18px 0;
-      padding: 20px 16px;
-      border: 1px solid var(--line);
-      border-radius: 23px;
-      background: var(--panel);
-      box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.4),
-        inset 0 0 24px rgba(255, 218, 110, 0.05);
-      backdrop-filter: blur(8px);
-    }
-
-    .section-title {
-      margin: 0 0 17px;
-      color: var(--light-gold);
-      text-align: center;
-      font-size: 28px;
-      letter-spacing: 0.1em;
-    }
-
-    /* 本日の演目 */
-    .genre-frame {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: #190009;
-    }
-
-    .genre-image {
-      display: block;
-      width: 100%;
-    }
-
-    .hotspot {
-      position: absolute;
-      border: 0;
-      background: transparent;
-    }
-
-    .hotspot:active {
-      background: rgba(255, 228, 141, 0.14);
-    }
-
-    .g1 { left: 2%; top: 18%; width: 18%; height: 32%; }
-    .g2 { left: 21%; top: 18%; width: 18%; height: 32%; }
-    .g3 { left: 40.5%; top: 18%; width: 18%; height: 32%; }
-    .g4 { left: 60%; top: 18%; width: 18%; height: 32%; }
-    .g5 { left: 79%; top: 18%; width: 18%; height: 32%; }
-
-    .g6 { left: 2%; top: 52%; width: 18%; height: 32%; }
-    .g7 { left: 21%; top: 52%; width: 18%; height: 32%; }
-    .g8 { left: 40.5%; top: 52%; width: 18%; height: 32%; }
-    .g9 { left: 60%; top: 52%; width: 18%; height: 32%; }
-    .g10 { left: 79%; top: 52%; width: 18%; height: 32%; }
-
-    .genre-description {
-      margin: 16px 0 0;
-      text-align: center;
-      font-size: 15px;
-      line-height: 1.9;
-    }
-
-    /* 作品一覧 */
-    .works-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .works-header h2 {
-      margin: 0;
-      color: var(--light-gold);
-      font-size: 27px;
-    }
-
-    .small-gold-button {
-      padding: 10px 15px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: #430012;
-      background: linear-gradient(#fff4b7, #d9a52f);
-      font-weight: bold;
-    }
-
-    .works-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 13px;
-    }
-
-    .work-card {
-      overflow: hidden;
-      border: 1px solid rgba(255, 224, 141, 0.5);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.055);
-      box-shadow: 0 10px 23px rgba(0, 0, 0, 0.32);
-    }
-
-    .work-cover {
-      width: 100%;
-      aspect-ratio: 3 / 4;
-      object-fit: cover;
-      background:
-        radial-gradient(circle at top, #8b173e, #21000c);
-    }
-
-    .placeholder-cover {
-      width: 100%;
-      aspect-ratio: 3 / 4;
-      display: grid;
-      place-items: center;
-      background:
-        radial-gradient(circle at top, #8b173e, #21000c);
-      font-size: 48px;
-    }
-
-    .work-body {
-      padding: 11px;
-    }
-
-    .work-genre {
-      display: inline-block;
-      margin-bottom: 6px;
-      padding: 3px 8px;
-      border: 1px solid rgba(255, 225, 143, 0.42);
-      border-radius: 999px;
-      color: var(--light-gold);
-      font-size: 10px;
-    }
-
-    .work-title {
-      margin: 0;
-      color: #fff8e9;
-      font-size: 15px;
-      line-height: 1.45;
-    }
-
-    .work-intro {
-      margin: 7px 0;
-      color: #decbd1;
-      font-family: sans-serif;
-      font-size: 11px;
-      line-height: 1.55;
-    }
-
-    .work-actions {
-      display: flex;
-      gap: 7px;
-      margin-top: 9px;
-    }
-
-    .work-action {
-      flex: 1;
-      padding: 8px 5px;
-      border: 1px solid rgba(255, 225, 143, 0.43);
-      border-radius: 9px;
-      color: var(--light-gold);
-      background: rgba(53, 0, 19, 0.85);
-      font-size: 11px;
-    }
-
-    .empty-message {
-      grid-column: 1 / -1;
-      padding: 35px 15px;
-      text-align: center;
-      color: #decbd1;
-      line-height: 1.9;
-    }
-
-    /* 投稿画面 */
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-label {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--light-gold);
-      font-weight: bold;
-      font-size: 15px;
-    }
-
-    .required {
-      color: #ff9fb8;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 13px 14px;
-      border: 1px solid rgba(255, 225, 143, 0.55);
-      border-radius: 13px;
-      outline: none;
-      color: #fff8e9;
-      background: rgba(15, 0, 6, 0.76);
-      font-family: sans-serif;
-      font-size: 16px;
-    }
-
-    .form-control:focus {
-      border-color: #ffe39a;
-      box-shadow: 0 0 0 3px rgba(255, 221, 132, 0.12);
-    }
-
-    textarea.form-control {
-      min-height: 120px;
-      resize: vertical;
-      line-height: 1.65;
-    }
-
-    .counter {
-      margin-top: 5px;
-      color: #cdb7bf;
-      text-align: right;
-      font-family: sans-serif;
-      font-size: 11px;
-    }
-
-    .image-preview {
-      width: min(100%, 260px);
-      aspect-ratio: 3 / 4;
-      margin: 12px auto 0;
-      display: none;
-      object-fit: cover;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: #21000c;
-    }
-
-    .form-buttons {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-top: 21px;
-    }
-
-    .form-button {
-      min-height: 50px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      font-weight: bold;
-    }
-
-    .secondary-button {
-      color: var(--light-gold);
-      background: rgba(32, 0, 11, 0.88);
-    }
-
-    .publish-button {
-      color: #4b0014;
-      background: linear-gradient(#fff5bc, #daa52f);
-    }
-
-    .draft-note {
-      margin: 14px 0 0;
-      color: #ceb8c0;
-      text-align: center;
-      font-family: sans-serif;
-      font-size: 11px;
-      line-height: 1.6;
-    }
-
-    /* マイページ */
-    .profile-card {
-      text-align: center;
-    }
-
-    .profile-icon {
-      width: 92px;
-      height: 92px;
-      margin: 0 auto 12px;
-      display: grid;
-      place-items: center;
-      border: 2px solid var(--line);
-      border-radius: 50%;
-      background:
-        radial-gradient(circle, #8b1940, #27000e);
-      font-size: 42px;
-    }
-
-    .profile-card h2 {
-      margin: 0;
-      color: var(--light-gold);
-    }
-
-    .profile-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 17px;
-    }
-
-    .stat-box {
-      padding: 13px 7px;
-      border: 1px solid rgba(255, 224, 140, 0.35);
-      border-radius: 13px;
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .stat-number {
-      display: block;
-      color: var(--light-gold);
-      font-size: 19px;
-      font-weight: bold;
-    }
-
-    .stat-name {
-      color: #d2bec6;
-      font-family: sans-serif;
-      font-size: 10px;
-    }
-
-    /* 設定 */
-    .setting-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 15px 2px;
-      border-bottom: 1px solid rgba(255, 224, 140, 0.18);
-    }
-
-    .setting-row:last-child {
-      border-bottom: 0;
-    }
-
-    .switch {
-      width: 54px;
-      height: 30px;
-      position: relative;
-      border: 0;
-      border-radius: 999px;
-      background: #5a4a50;
-    }
-
-    .switch::after {
-      content: "";
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: white;
-      transition: 0.2s;
-    }
-
-    .switch.on {
-      background: #b88722;
-    }
-
-    .switch.on::after {
-      left: 27px;
-    }
-
-    /* モーダル */
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 300;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.8);
-    }
-
-    .modal.visible {
-      display: flex;
-    }
-
-    .modal-box {
-      width: min(100%, 500px);
-      max-height: 88vh;
-      overflow-y: auto;
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: 23px;
-      background:
-        linear-gradient(145deg, #5e0022, #21000c);
-      box-shadow: 0 20px 65px rgba(0, 0, 0, 0.74);
-    }
-
-    .modal-close {
-      float: right;
-      width: 39px;
-      height: 39px;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      color: white;
-      background: transparent;
-      font-size: 20px;
-    }
-
-    .modal-title {
-      margin: 0 45px 15px 0;
-      color: var(--light-gold);
-      font-size: 25px;
-    }
-
-    .modal-cover {
-      width: min(100%, 270px);
-      aspect-ratio: 3 / 4;
-      display: block;
-      margin: 0 auto 17px;
-      object-fit: cover;
-      border: 1px solid var(--line);
-      border-radius: 15px;
-    }
-
-    .modal-text {
-      white-space: pre-wrap;
-      line-height: 1.85;
-      overflow-wrap: anywhere;
-    }
-
-    /* 下部メニュー */
-    .bottom-nav {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 160;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      padding-bottom: env(safe-area-inset-bottom);
-      border-top: 1px solid var(--line);
-      background: rgba(53, 0, 19, 0.97);
-      backdrop-filter: blur(13px);
-    }
-
-    .nav-button {
-      min-height: 70px;
-      border: 0;
-      color: #ceb9c1;
-      background: transparent;
-      font-size: 10px;
-    }
-
-    .nav-button.active {
-      color: var(--light-gold);
-      background:
-        linear-gradient(
-          rgba(255, 219, 108, 0.14),
-          transparent
-        );
-    }
-
-    .nav-icon {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 23px;
-    }
-
-    @media (min-width: 720px) {
-      .works-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .hero {
-        min-height: 80vh;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#35000f">
+<title>恋ばこ</title>
+
+<style>
+:root {
+  --wine: #690020;
+  --deep: #31000f;
+  --dark: #160007;
+  --gold: #d8a638;
+  --lg: #ffe7a1;
+  --cream: #fff9eb;
+  --line: rgba(255, 223, 135, 0.7);
+  --panel: rgba(48, 0, 16, 0.94);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding-bottom: 86px;
+  color: var(--cream);
+  background:
+    linear-gradient(rgba(20, 0, 8, 0.08), rgba(20, 0, 8, 0.9)),
+    url("file_00000000187481f897c170cd1a77aa0f.png")
+    center top / cover fixed no-repeat;
+  font-family:
+    "Yu Mincho",
+    "Hiragino Mincho ProN",
+    "Noto Serif JP",
+    serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 上部 */
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 62px;
+  padding:
+    max(10px, env(safe-area-inset-top))
+    14px
+    10px;
+  background: rgba(43, 0, 15, 0.95);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+
+.logo {
+  color: var(--lg);
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 14px rgba(255, 216, 103, 0.4);
+}
+
+.user-name {
+  max-width: 90px;
+  overflow: hidden;
+  color: #fff5d2;
+  font-family: sans-serif;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.currency {
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--lg);
+  background: rgba(30, 0, 10, 0.8);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ホーム */
+.hero {
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 26px 18px 34px;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 50% 10%,
+      rgba(255, 238, 178, 0.42),
+      transparent 30%
+    );
+  animation: chandelierGlow 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes chandelierGlow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.spark {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff1a8;
+  box-shadow:
+    0 0 8px #fff,
+    0 0 17px #ffd45d;
+  animation: floatSpark 5s linear infinite;
+  opacity: 0;
+}
+
+@keyframes floatSpark {
+  0% {
+    opacity: 0;
+    transform: translateY(70px) scale(0.4);
+  }
+
+  20% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-260px) scale(1.3);
+  }
+}
+
+.welcome-card,
+.section {
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(91, 0, 31, 0.95),
+      rgba(30, 0, 10, 0.97)
+    );
+  box-shadow:
+    0 20px 55px rgba(0, 0, 0, 0.53),
+    inset 0 0 28px rgba(255, 222, 126, 0.06);
+}
+
+.welcome-card {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 650px);
+  padding: 25px 18px;
+  text-align: center;
+  border-radius: 30px;
+}
+
+.welcome-card h1 {
+  margin: 0;
+  color: var(--lg);
+  font-size: clamp(33px, 9vw, 52px);
+  letter-spacing: 0.1em;
+  text-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.8),
+    0 0 17px rgba(255, 216, 105, 0.35);
+}
+
+.welcome-card p {
+  margin: 16px 0 21px;
+  font-size: 15px;
+  line-height: 1.95;
+}
+
+.gold-button {
+  min-width: 210px;
+  padding: 15px 24px;
+  border: 1px solid #fff1af;
+  border-radius: 999px;
+  color: #500016;
+  background:
+    linear-gradient(
+      #fff7c8,
+      #ecc553 55%,
+      #b97512
+    );
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.42),
+    0 0 22px rgba(255, 220, 106, 0.32);
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.gold-button:active,
+.small-gold-button:active {
+  transform: scale(0.97);
+}
+
+/* ページ */
+.page {
+  width: min(100%, 950px);
+  margin: 0 auto;
+  padding: 20px 15px 38px;
+}
+
+.section {
+  margin: 18px 0;
+  padding: 20px 16px;
+  border-radius: 23px;
+  backdrop-filter: blur(8px);
+}
+
+.section-title {
+  margin: 0 0 17px;
+  color: var(--lg);
+  text-align: center;
+  font-size: 28px;
+  letter-spacing: 0.1em;
+}
+
+/* 本日の演目 */
+.genre-frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #190009;
+}
+
+.genre-image {
+  display: block;
+  width: 100%;
+}
+
+.hotspot {
+  position: absolute;
+  border: 0;
+  background: transparent;
+}
+
+.hotspot:active {
+  background: rgba(255, 228, 141, 0.14);
+}
+
+.g1 {
+  left: 2%;
+  top: 18%;
+  width: 18%;
+  height: 32%;
+}
+
+.g2 {
+  left: 21%;
+  top: 18%;
+  width: 18%;
+  height: 32%;
+}
+
+.g3 {
+  left: 40.5%;
+  top: 18%;
+  width: 18%;
+  height: 32%;
+}
+
+.g4 {
+  left: 60%;
+  top: 18%;
+  width: 18%;
+  height: 32%;
+}
+
+.g5 {
+  left: 79%;
+  top: 18%;
+  width: 18%;
+  height: 32%;
+}
+
+.g6 {
+  left: 2%;
+  top: 52%;
+  width: 18%;
+  height: 32%;
+}
+
+.g7 {
+  left: 21%;
+  top: 52%;
+  width: 18%;
+  height: 32%;
+}
+
+.g8 {
+  left: 40.5%;
+  top: 52%;
+  width: 18%;
+  height: 32%;
+}
+
+.g9 {
+  left: 60%;
+  top: 52%;
+  width: 18%;
+  height: 32%;
+}
+
+.g10 {
+  left: 79%;
+  top: 52%;
+  width: 18%;
+  height: 32%;
+}
+
+.genre-description {
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+/* 作品一覧 */
+.works-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.works-header h2 {
+  margin: 0;
+  color: var(--lg);
+  font-size: 27px;
+}
+
+.small-gold-button {
+  padding: 10px 15px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: #430012;
+  background: linear-gradient(#fff4b7, #d9a52f);
+  font-weight: bold;
+}
+
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.work-card {
+  overflow: hidden;
+  border: 1px solid rgba(255, 224, 141, 0.5);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: 0 10px 23px rgba(0, 0, 0, 0.32);
+}
+
+.work-cover {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  background:
+    radial-gradient(circle at top, #8b173e, #21000c);
+}
+
+.placeholder-cover {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at top, #8b173e, #21000c);
+  font-size: 48px;
+}
+
+.work-body {
+  padding: 11px;
+}
+
+.work-genre {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 225, 143, 0.42);
+  border-radius: 999px;
+  color: var(--lg);
+  font-size: 10px;
+}
+
+.work-title {
+  margin: 0;
+  color: #fff8e9;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.work-intro {
+  margin: 7px 0;
+  color: #decbd1;
+  font-family: sans-serif;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.work-owner {
+  color: #d9c4cb;
+  font-family: sans-serif;
+  font-size: 10px;
+}
+
+.work-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.work-action {
+  flex: 1;
+  padding: 8px 5px;
+  border: 1px solid rgba(255, 225, 143, 0.43);
+  border-radius: 9px;
+  color: var(--lg);
+  background: rgba(53, 0, 19, 0.85);
+  font-size: 11px;
+}
+
+.empty-message {
+  grid-column: 1 / -1;
+  padding: 35px 15px;
+  text-align: center;
+  color: #decbd1;
+  line-height: 1.9;
+}
+
+/* 投稿フォーム */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--lg);
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid rgba(255, 225, 143, 0.55);
+  border-radius: 13px;
+  outline: none;
+  color: #fff8e9;
+  background: rgba(15, 0, 6, 0.78);
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+.form-control:focus {
+  border-color: #ffe39a;
+  box-shadow: 0 0 0 3px rgba(255, 221, 132, 0.12);
+}
+
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.65;
+}
+
+.counter {
+  margin-top: 5px;
+  color: #cdb7bf;
+  text-align: right;
+  font-family: sans-serif;
+  font-size: 11px;
+}
+
+.image-preview {
+  width: min(100%, 260px);
+  aspect-ratio: 3 / 4;
+  margin: 12px auto 0;
+  display: none;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #21000c;
+}
+
+.form-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 21px;
+}
+
+.form-button {
+  min-height: 50px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-weight: bold;
+}
+
+.secondary-button {
+  color: var(--lg);
+  background: rgba(32, 0, 11, 0.88);
+}
+
+.publish-button {
+  color: #4b0014;
+  background: linear-gradient(#fff5bc, #daa52f);
+}
+
+/* マイページ */
+.profile-card {
+  text-align: center;
+}
+
+.profile-icon {
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 12px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #8b1940, #27000e);
+  font-size: 42px;
+}
+
+.profile-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-card h2 {
+  margin: 0;
+  color: var(--lg);
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 17px;
+}
+
+.stat-box {
+  padding: 13px 7px;
+  border: 1px solid rgba(255, 224, 140, 0.35);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.stat-number {
+  display: block;
+  color: var(--lg);
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.stat-name {
+  color: #d2bec6;
+  font-family: sans-serif;
+  font-size: 10px;
+}
+
+/* 下部メニュー */
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 160;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid var(--line);
+  background: rgba(53, 0, 19, 0.97);
+  backdrop-filter: blur(13px);
+}
+
+.nav-button {
+  min-height: 70px;
+  border: 0;
+  color: #ceb9c1;
+  background: transparent;
+  font-size: 10px;
+}
+
+.nav-button.active {
+  color: var(--lg);
+  background:
+    linear-gradient(
+      rgba(255, 219, 108, 0.14),
+      transparent
+    );
+}
+
+.nav-icon {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 23px;
+}
+
+/* 詳細モーダル */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.modal.visible {
+  display: flex;
+}
+
+.modal-box {
+  width: min(100%, 520px);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 23px;
+  background:
+    linear-gradient(145deg, #5e0022, #21000c);
+  box-shadow: 0 20px 65px rgba(0, 0, 0, 0.74);
+}
+
+.modal-close {
+  float: right;
+  width: 39px;
+  height: 39px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: white;
+  background: transparent;
+  font-size: 20px;
+}
+
+.modal-cover {
+  width: min(100%, 270px);
+  aspect-ratio: 3 / 4;
+  display: block;
+  margin: 0 auto 17px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+}
+
+.modal-text {
+  white-space: pre-wrap;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+/* ログイン */
+.auth-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background:
+    linear-gradient(
+      rgba(10, 0, 5, 0.55),
+      rgba(10, 0, 5, 0.94)
+    ),
+    url("file_00000000187481f897c170cd1a77aa0f.png")
+    center / cover;
+}
+
+.auth-card {
+  width: min(100%, 430px);
+  padding: 25px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(48, 0, 16, 0.97);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
+}
+
+.auth-card h1 {
+  margin: 0 0 8px;
+  color: var(--lg);
+  font-size: 38px;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.auth-tab {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #21000b;
+  color: var(--lg);
+}
+
+.auth-tab.active {
+  color: #4b0014;
+  background: linear-gradient(#fff2aa, #b77b17);
+}
+
+.google-button {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 13px;
+  color: #222;
+  background: white;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+.auth-message {
+  min-height: 22px;
+  color: #ffb6c8;
+  font-family: sans-serif;
+  font-size: 13px;
+}
+
+/* カーテン */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  overflow: hidden;
+  background: #140006;
+}
+
+.curtain-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 52%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #380009 0 8%,
+      #8e001f 9% 17%,
+      #42000c 18% 27%
+    );
+  box-shadow: inset 0 0 60px #130003;
+  transition:
+    transform 1.8s cubic-bezier(0.65, 0, 0.25, 1);
+}
+
+.curtain-left {
+  left: 0;
+}
+
+.curtain-right {
+  right: 0;
+}
+
+.curtain.open .curtain-left {
+  transform: translateX(-100%);
+}
+
+.curtain.open .curtain-right {
+  transform: translateX(100%);
+}
+
+.curtain-message {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 12%;
+  width: min(86%, 560px);
+  padding: 18px;
+  transform: translateX(-50%);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--lg);
+  background: rgba(48, 0, 16, 0.93);
+  text-align: center;
+}
+
+.loading {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: grid;
+  place-items: center;
+  color: var(--lg);
+  background: #160007;
+}
+
+@media (min-width: 720px) {
+  .works-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .hero {
+    min-height: 80vh;
+  }
+}
+</style>
 </head>
-
 <body>
 
-  <header class="top-bar">
-    <div class="top-logo">恋ばこ</div>
+  <!-- Firebase確認中 -->
+  <div
+    class="loading"
+    id="loadingScreen"
+  >
+    恋ばこを開演準備中…
+  </div>
+
+  <!-- ログイン・新規登録画面 -->
+  <section
+    class="auth-screen hidden"
+    id="authScreen"
+  >
+    <div class="auth-card">
+
+      <h1>恋ばこ</h1>
+
+      <p>
+        恋と物語が集まる劇場へようこそ
+      </p>
+
+      <div class="auth-tabs">
+
+        <button
+          class="auth-tab active"
+          id="loginTab"
+          type="button"
+        >
+          ログイン
+        </button>
+
+        <button
+          class="auth-tab"
+          id="signupTab"
+          type="button"
+        >
+          新規登録
+        </button>
+
+      </div>
+
+      <button
+        class="google-button"
+        id="googleLoginButton"
+        type="button"
+      >
+        G　Googleで続ける
+      </button>
+
+      <p
+        style="
+          margin: 17px 0;
+          color: #d2bec6;
+          font-family: sans-serif;
+          font-size: 13px;
+        "
+      >
+        ── または ──
+      </p>
+
+      <div class="form-group">
+
+        <input
+          class="form-control"
+          id="authEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="メールアドレス"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <input
+          class="form-control"
+          id="authPassword"
+          type="password"
+          minlength="6"
+          autocomplete="current-password"
+          placeholder="パスワード（6文字以上）"
+        >
+
+      </div>
+
+      <button
+        class="gold-button"
+        id="emailAuthButton"
+        type="button"
+        style="width: 100%;"
+      >
+        ログイン
+      </button>
+
+      <p
+        class="auth-message"
+        id="authMessage"
+      ></p>
+
+    </div>
+  </section>
+
+  <!-- 開演カーテン -->
+  <section
+    class="curtain hidden"
+    id="curtainScreen"
+  >
+
+    <div
+      class="curtain-panel curtain-left"
+    ></div>
+
+    <div
+      class="curtain-panel curtain-right"
+    ></div>
+
+    <div class="curtain-message">
+
+      <strong>
+        恋ばこ
+      </strong>
+
+      <br>
+
+      まもなく劇場の幕が上がります
+
+      <br>
+
+      <button
+        class="gold-button"
+        type="button"
+        onclick="openCurtain()"
+        style="
+          min-width: 160px;
+          margin-top: 14px;
+          padding: 11px 20px;
+        "
+      >
+        入場する
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- 上部 -->
+  <header class="top">
+
+    <div class="logo">
+      恋ばこ
+    </div>
+
+    <div
+      class="user-name"
+      id="topUserName"
+    ></div>
 
     <div class="currency">
-      ⭐ <span id="woodCount">100</span>
-     　🌹 <span id="fanCount">0</span>
-     　🎫 <span id="ticketCount">1</span>
+      ⭐ 100　🌹 0　🎫 1
     </div>
+
   </header>
 
   <!-- ホーム -->
@@ -718,43 +1022,83 @@
 
     <section class="hero">
 
-      <span class="spark"
-        style="left:12%; bottom:8%; animation-delay:0s;"></span>
-      <span class="spark"
-        style="left:28%; bottom:15%; animation-delay:1s;"></span>
-      <span class="spark"
-        style="left:49%; bottom:7%; animation-delay:2.2s;"></span>
-      <span class="spark"
-        style="left:73%; bottom:14%; animation-delay:0.7s;"></span>
-      <span class="spark"
-        style="left:90%; bottom:9%; animation-delay:3s;"></span>
+      <span
+        class="spark"
+        style="
+          left: 12%;
+          bottom: 8%;
+          animation-delay: 0s;
+        "
+      ></span>
+
+      <span
+        class="spark"
+        style="
+          left: 28%;
+          bottom: 15%;
+          animation-delay: 1s;
+        "
+      ></span>
+
+      <span
+        class="spark"
+        style="
+          left: 49%;
+          bottom: 7%;
+          animation-delay: 2.2s;
+        "
+      ></span>
+
+      <span
+        class="spark"
+        style="
+          left: 73%;
+          bottom: 14%;
+          animation-delay: 0.7s;
+        "
+      ></span>
+
+      <span
+        class="spark"
+        style="
+          left: 90%;
+          bottom: 9%;
+          animation-delay: 3s;
+        "
+      ></span>
 
       <div class="welcome-card">
-        <h1>おかえりなさい</h1>
+
+        <h1>
+          おかえりなさい
+        </h1>
 
         <p>
-          ここは、恋と夢と希望が集まる劇場。<br>
-          <span class="keep-together">
-            今日も、あなたの物語が始まります。
-          </span>
+          ここは、恋と夢と希望が集まる劇場。
+          <br>
+          今日も、あなたの物語が始まります。
         </p>
 
         <button
           class="gold-button"
+          type="button"
           onclick="scrollToGenres()"
         >
           本日の演目を見る
         </button>
+
       </div>
 
     </section>
 
     <main class="page">
 
+      <!-- ジャンル -->
       <section
         class="section"
         id="genreSection"
       >
+
         <h2 class="section-title">
           本日の演目
         </h2>
@@ -764,71 +1108,106 @@
           <img
             class="genre-image"
             src="file_000000001dfc81faa94b0f333e4b01fe.png"
-            alt="ジャンルを選んでください"
+            alt="本日の演目"
           >
 
-          <button class="hotspot g1"
+          <button
+            class="hotspot g1"
+            type="button"
+            aria-label="恋"
             onclick="filterGenre('恋')"
-            aria-label="恋"></button>
+          ></button>
 
-          <button class="hotspot g2"
+          <button
+            class="hotspot g2"
+            type="button"
+            aria-label="夢"
             onclick="filterGenre('夢')"
-            aria-label="夢"></button>
+          ></button>
 
-          <button class="hotspot g3"
+          <button
+            class="hotspot g3"
+            type="button"
+            aria-label="希望"
             onclick="filterGenre('希望')"
-            aria-label="希望"></button>
+          ></button>
 
-          <button class="hotspot g4"
+          <button
+            class="hotspot g4"
+            type="button"
+            aria-label="癒やし"
             onclick="filterGenre('癒やし')"
-            aria-label="癒やし"></button>
+          ></button>
 
-          <button class="hotspot g5"
+          <button
+            class="hotspot g5"
+            type="button"
+            aria-label="ホラー"
             onclick="filterGenre('ホラー')"
-            aria-label="ホラー"></button>
+          ></button>
 
-          <button class="hotspot g6"
+          <button
+            class="hotspot g6"
+            type="button"
+            aria-label="ミステリー"
             onclick="filterGenre('ミステリー')"
-            aria-label="ミステリー"></button>
+          ></button>
 
-          <button class="hotspot g7"
+          <button
+            class="hotspot g7"
+            type="button"
+            aria-label="女性向け"
             onclick="filterGenre('女性向け')"
-            aria-label="女性向け"></button>
+          ></button>
 
-          <button class="hotspot g8"
+          <button
+            class="hotspot g8"
+            type="button"
+            aria-label="男性向け"
             onclick="filterGenre('男性向け')"
-            aria-label="男性向け"></button>
+          ></button>
 
-          <button class="hotspot g9"
+          <button
+            class="hotspot g9"
+            type="button"
+            aria-label="その他"
             onclick="filterGenre('その他')"
-            aria-label="その他"></button>
+          ></button>
 
-          <button class="hotspot g10"
+          <button
+            class="hotspot g10"
+            type="button"
+            aria-label="新作・特集"
             onclick="filterGenre('新作・特集')"
-            aria-label="新作・特集"></button>
+          ></button>
 
         </div>
 
         <p class="genre-description">
-          🌹恋・🌈夢・⭐希望・🌙癒やし・😈ホラー・<br>
-          🦇ミステリー・💕女性向け・💙男性向け・🤍その他。<br>
-          <span class="keep-together">
-            作品機能は、これから一つずつ開演していきます。
-          </span>
+          🌹恋・🌈夢・⭐希望・🌙癒やし・😈ホラー
+          <br>
+          🦇ミステリー・💕女性向け・💙男性向け・🤍その他
         </p>
+
       </section>
 
+      <!-- 新着作品 -->
       <section class="section">
 
         <div class="works-header">
-          <h2 id="homeWorksTitle">新着作品</h2>
+
+          <h2 id="homeWorksTitle">
+            新着作品
+          </h2>
 
           <button
             class="small-gold-button"
+            type="button"
             onclick="showPage('create')"
           >
             ＋ 投稿
           </button>
+
         </div>
 
         <div
@@ -847,17 +1226,23 @@
     class="page hidden"
     id="worksPage"
   >
+
     <section class="section">
 
       <div class="works-header">
-        <h2>作品一覧</h2>
+
+        <h2>
+          作品一覧
+        </h2>
 
         <button
           class="small-gold-button"
+          type="button"
           onclick="renderWorks('すべて')"
         >
           全て表示
         </button>
+
       </div>
 
       <div
@@ -866,36 +1251,44 @@
       ></div>
 
     </section>
+
   </main>
 
-  <!-- 投稿 -->
+  <!-- 作品作成 -->
   <main
     class="page hidden"
     id="createPage"
   >
+
     <section class="section">
 
       <h2 class="section-title">
-        新しい作品を作る
+        作品を作る
       </h2>
 
       <input
-        type="hidden"
         id="editingId"
+        type="hidden"
       >
 
       <div class="form-group">
-        <label class="form-label">
+
+        <label
+          class="form-label"
+          for="workTitle"
+        >
           作品タイトル
-          <span class="required">*</span>
+          <span style="color: #ff9fb8;">
+            *
+          </span>
         </label>
 
         <input
           class="form-control"
           id="workTitle"
+          type="text"
           maxlength="50"
-          placeholder="作品タイトルを入力"
-          oninput="updateCounter('workTitle','titleCounter',50)"
+          placeholder="例：舞台俳優との甘い恋"
         >
 
         <div
@@ -904,44 +1297,91 @@
         >
           0/50
         </div>
+
       </div>
 
       <div class="form-group">
-        <label class="form-label">
+
+        <label
+          class="form-label"
+          for="workGenre"
+        >
           ジャンル
-          <span class="required">*</span>
+          <span style="color: #ff9fb8;">
+            *
+          </span>
         </label>
 
         <select
           class="form-control"
           id="workGenre"
         >
-          <option value="">選択してください</option>
-          <option>恋</option>
-          <option>夢</option>
-          <option>希望</option>
-          <option>癒やし</option>
-          <option>ホラー</option>
-          <option>ミステリー</option>
-          <option>女性向け</option>
-          <option>男性向け</option>
-          <option>その他</option>
-          <option>新作・特集</option>
+
+          <option value="">
+            選択してください
+          </option>
+
+          <option value="恋">
+            恋
+          </option>
+
+          <option value="夢">
+            夢
+          </option>
+
+          <option value="希望">
+            希望
+          </option>
+
+          <option value="癒やし">
+            癒やし
+          </option>
+
+          <option value="ホラー">
+            ホラー
+          </option>
+
+          <option value="ミステリー">
+            ミステリー
+          </option>
+
+          <option value="女性向け">
+            女性向け
+          </option>
+
+          <option value="男性向け">
+            男性向け
+          </option>
+
+          <option value="その他">
+            その他
+          </option>
+
+          <option value="新作・特集">
+            新作・特集
+          </option>
+
         </select>
+
       </div>
 
       <div class="form-group">
-        <label class="form-label">
-          キャラ紹介文
-          <span class="required">*</span>
+
+        <label
+          class="form-label"
+          for="workIntro"
+        >
+          キャラクター紹介
+          <span style="color: #ff9fb8;">
+            *
+          </span>
         </label>
 
         <textarea
           class="form-control"
           id="workIntro"
           maxlength="200"
-          placeholder="作品の短い紹介文を入力"
-          oninput="updateCounter('workIntro','introCounter',200)"
+          placeholder="作品やキャラクターの短い紹介"
         ></textarea>
 
         <div
@@ -950,20 +1390,26 @@
         >
           0/200
         </div>
+
       </div>
 
       <div class="form-group">
-        <label class="form-label">
-          詳細説明・物語
-          <span class="required">*</span>
+
+        <label
+          class="form-label"
+          for="workStory"
+        >
+          性格・設定・物語
+          <span style="color: #ff9fb8;">
+            *
+          </span>
         </label>
 
         <textarea
           class="form-control"
           id="workStory"
           maxlength="5000"
-          placeholder="キャラクター設定や物語を入力"
-          oninput="updateCounter('workStory','storyCounter',5000)"
+          placeholder="キャラクター設定や物語の内容"
         ></textarea>
 
         <div
@@ -972,10 +1418,15 @@
         >
           0/5000
         </div>
+
       </div>
 
       <div class="form-group">
-        <label class="form-label">
+
+        <label
+          class="form-label"
+          for="workGreeting"
+        >
           最初のセリフ
         </label>
 
@@ -984,7 +1435,6 @@
           id="workGreeting"
           maxlength="1000"
           placeholder="物語が始まる最初のセリフ"
-          oninput="updateCounter('workGreeting','greetingCounter',1000)"
         ></textarea>
 
         <div
@@ -993,30 +1443,39 @@
         >
           0/1000
         </div>
+
       </div>
 
       <div class="form-group">
-        <label class="form-label">
-          表紙画像
+
+        <label
+          class="form-label"
+          for="workImage"
+        >
+          サムネイル画像
         </label>
 
         <input
           class="form-control"
-          type="file"
           id="workImage"
+          type="file"
           accept="image/*"
-          onchange="prepareImage(event)"
         >
 
         <img
           class="image-preview"
           id="imagePreview"
-          alt="表紙画像プレビュー"
+          alt="画像プレビュー"
         >
+
       </div>
 
       <div class="form-group">
-        <label class="form-label">
+
+        <label
+          class="form-label"
+          for="workStatus"
+        >
           公開設定
         </label>
 
@@ -1024,16 +1483,28 @@
           class="form-control"
           id="workStatus"
         >
-          <option value="公開">公開</option>
-          <option value="非公開">非公開</option>
-          <option value="下書き">下書き</option>
+
+          <option value="公開">
+            公開
+          </option>
+
+          <option value="非公開">
+            非公開
+          </option>
+
+          <option value="下書き">
+            下書き
+          </option>
+
         </select>
+
       </div>
 
       <div class="form-buttons">
 
         <button
           class="form-button secondary-button"
+          type="button"
           onclick="previewForm()"
         >
           プレビュー
@@ -1041,13 +1512,15 @@
 
         <button
           class="form-button publish-button"
+          type="button"
           onclick="publishWork()"
         >
-          投稿する
+          公開する
         </button>
 
         <button
           class="form-button secondary-button"
+          type="button"
           onclick="saveDraft()"
         >
           下書き保存
@@ -1055,6 +1528,7 @@
 
         <button
           class="form-button secondary-button"
+          type="button"
           onclick="resetForm()"
         >
           入力を消す
@@ -1062,13 +1536,21 @@
 
       </div>
 
-      <p class="draft-note">
-        投稿内容は、このスマホのブラウザ内に保存されます。<br>
-        ブラウザのデータを削除すると消えるため、
-        大切な文章は別の場所にも保存してください。
+      <p
+        style="
+          margin-top: 16px;
+          color: #ceb8c0;
+          text-align: center;
+          font-family: sans-serif;
+          font-size: 11px;
+          line-height: 1.7;
+        "
+      >
+        公開した作品は、ログインした他の人にも表示されます。
       </p>
 
     </section>
+
   </main>
 
   <!-- マイページ -->
@@ -1076,51 +1558,80 @@
     class="page hidden"
     id="mypagePage"
   >
+
     <section class="section profile-card">
 
-      <div class="profile-icon">
+      <div
+        class="profile-icon"
+        id="profileIcon"
+      >
         🌹
       </div>
 
-      <h2>もえののん</h2>
+      <h2 id="profileName">
+        ゲスト
+      </h2>
 
-      <p>
-        恋ばこ劇場・主宰
-      </p>
+      <p
+        id="profileEmail"
+        style="
+          font-family: sans-serif;
+          font-size: 12px;
+          overflow-wrap: anywhere;
+        "
+      ></p>
+
+      <button
+        class="small-gold-button"
+        type="button"
+        onclick="logoutUser()"
+      >
+        ログアウト
+      </button>
 
       <div class="profile-stats">
 
         <div class="stat-box">
+
           <span
             class="stat-number"
             id="postCount"
           >
             0
           </span>
+
           <span class="stat-name">
             投稿作品
           </span>
+
         </div>
 
         <div class="stat-box">
+
           <span class="stat-number">
             0
           </span>
+
           <span class="stat-name">
-            ファンクラブ
+            ファン
           </span>
+
         </div>
 
         <div class="stat-box">
+
           <span class="stat-number">
             0
           </span>
+
           <span class="stat-name">
-            チェキ
+            お気に入り
           </span>
+
         </div>
 
       </div>
+
     </section>
 
     <section class="section">
@@ -1135,6 +1646,7 @@
       ></div>
 
     </section>
+
   </main>
 
   <!-- 設定 -->
@@ -1142,112 +1654,130 @@
     class="page hidden"
     id="settingsPage"
   >
+
     <section class="section">
 
       <h2 class="section-title">
         劇場設定
       </h2>
 
-      <div class="setting-row">
-        <span>音声・効果音</span>
-        <button
-          class="switch on"
-          onclick="toggleSwitch(this)"
-          aria-label="音声設定"
-        ></button>
-      </div>
+      <p
+        style="
+          color: #dfcbd2;
+          text-align: center;
+          line-height: 1.8;
+        "
+      >
+        自分が作った作品だけ、
+        編集・削除できます。
+      </p>
 
-      <div class="setting-row">
-        <span>劇場からのお知らせ</span>
-        <button
-          class="switch on"
-          onclick="toggleSwitch(this)"
-          aria-label="通知設定"
-        ></button>
-      </div>
-
-      <div class="setting-row">
-        <span>キラキラ演出</span>
-        <button
-          class="switch on"
-          onclick="toggleSwitch(this)"
-          aria-label="演出設定"
-        ></button>
-      </div>
-
-      <div class="setting-row">
-        <span>投稿データを全削除</span>
+      <div
+        style="
+          display: grid;
+          gap: 12px;
+          margin-top: 20px;
+        "
+      >
 
         <button
           class="small-gold-button"
-          onclick="deleteAllWorks()"
+          type="button"
+          onclick="showPage('mypage')"
         >
-          削除
+          自分の投稿を確認する
         </button>
+
+        <button
+          class="small-gold-button"
+          type="button"
+          onclick="logoutUser()"
+        >
+          ログアウト
+        </button>
+
       </div>
 
     </section>
+
   </main>
 
-  <!-- 下メニュー -->
+  <!-- 下部メニュー -->
   <nav class="bottom-nav">
 
     <button
       class="nav-button active"
       data-page="home"
+      type="button"
       onclick="showPage('home')"
     >
-      <span class="nav-icon">🏛️</span>
+      <span class="nav-icon">
+        🏛️
+      </span>
       ホーム
     </button>
 
     <button
       class="nav-button"
       data-page="works"
+      type="button"
       onclick="showPage('works')"
     >
-      <span class="nav-icon">📖</span>
+      <span class="nav-icon">
+        📖
+      </span>
       作品一覧
     </button>
 
     <button
       class="nav-button"
       data-page="create"
+      type="button"
       onclick="showPage('create')"
     >
-      <span class="nav-icon">✍️</span>
+      <span class="nav-icon">
+        ✍️
+      </span>
       作品を作る
     </button>
 
     <button
       class="nav-button"
       data-page="mypage"
+      type="button"
       onclick="showPage('mypage')"
     >
-      <span class="nav-icon">🌹</span>
+      <span class="nav-icon">
+        🌹
+      </span>
       マイページ
     </button>
 
     <button
       class="nav-button"
       data-page="settings"
+      type="button"
       onclick="showPage('settings')"
     >
-      <span class="nav-icon">⚙️</span>
+      <span class="nav-icon">
+        ⚙️
+      </span>
       設定
     </button>
 
   </nav>
 
-  <!-- プレビュー・作品詳細 -->
+  <!-- 作品詳細・プレビュー -->
   <div
     class="modal"
-    id="modal"
+    id="workModal"
   >
+
     <div class="modal-box">
 
       <button
         class="modal-close"
+        type="button"
         onclick="closeModal()"
       >
         ×
@@ -1256,672 +1786,5 @@
       <div id="modalContent"></div>
 
     </div>
+
   </div>
-
-  <script>
-    const STORAGE_KEY = "koibakoWorksV1";
-
-    let preparedImage = "";
-    let currentGenre = "すべて";
-
-    const modal = document.getElementById("modal");
-    const modalContent = document.getElementById("modalContent");
-
-    function loadWorks() {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? JSON.parse(saved) : [];
-      } catch (error) {
-        console.error(error);
-        return [];
-      }
-    }
-
-    function saveWorks(works) {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(works)
-      );
-    }
-
-    function escapeHtml(value) {
-      return String(value || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function showPage(pageName) {
-      const pageMap = {
-        home: "homePage",
-        works: "worksPage",
-        create: "createPage",
-        mypage: "mypagePage",
-        settings: "settingsPage"
-      };
-
-      Object.values(pageMap).forEach((id) => {
-        document
-          .getElementById(id)
-          .classList.add("hidden");
-      });
-
-      document
-        .getElementById(pageMap[pageName])
-        .classList.remove("hidden");
-
-      document
-        .querySelectorAll(".nav-button")
-        .forEach((button) => {
-          button.classList.toggle(
-            "active",
-            button.dataset.page === pageName
-          );
-        });
-
-      if (pageName === "home") {
-        renderHomeWorks();
-      }
-
-      if (pageName === "works") {
-        renderWorks("すべて");
-      }
-
-      if (pageName === "mypage") {
-        renderMyPage();
-      }
-
-      window.scrollTo({
-        top: 0,
-        behavior: "instant"
-      });
-    }
-
-    function scrollToGenres() {
-      document
-        .getElementById("genreSection")
-        .scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-    }
-
-    function updateCounter(inputId, counterId, max) {
-      const length =
-        document.getElementById(inputId).value.length;
-
-      document.getElementById(counterId).textContent =
-        length + "/" + max;
-    }
-
-    function prepareImage(event) {
-      const file = event.target.files[0];
-
-      if (!file) {
-        return;
-      }
-
-      if (!file.type.startsWith("image/")) {
-        alert("画像ファイルを選んでください。");
-        event.target.value = "";
-        return;
-      }
-
-      const reader = new FileReader();
-
-      reader.onload = function(loadEvent) {
-        const image = new Image();
-
-        image.onload = function() {
-          const maxWidth = 720;
-          const scale =
-            Math.min(1, maxWidth / image.width);
-
-          const canvas =
-            document.createElement("canvas");
-
-          canvas.width =
-            Math.round(image.width * scale);
-
-          canvas.height =
-            Math.round(image.height * scale);
-
-          const context =
-            canvas.getContext("2d");
-
-          context.drawImage(
-            image,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-
-          preparedImage =
-            canvas.toDataURL("image/jpeg", 0.76);
-
-          const preview =
-            document.getElementById("imagePreview");
-
-          preview.src = preparedImage;
-          preview.style.display = "block";
-        };
-
-        image.src = loadEvent.target.result;
-      };
-
-      reader.readAsDataURL(file);
-    }
-
-    function getFormData(statusOverride) {
-      return {
-        id:
-          document.getElementById("editingId").value ||
-          "work_" + Date.now(),
-
-        title:
-          document.getElementById("workTitle").value.trim(),
-
-        genre:
-          document.getElementById("workGenre").value,
-
-        intro:
-          document.getElementById("workIntro").value.trim(),
-
-        story:
-          document.getElementById("workStory").value.trim(),
-
-        greeting:
-          document.getElementById("workGreeting").value.trim(),
-
-        image: preparedImage,
-
-        status:
-          statusOverride ||
-          document.getElementById("workStatus").value,
-
-        updatedAt: new Date().toISOString()
-      };
-    }
-
-    function validateWork(work) {
-      if (!work.title) {
-        alert("作品タイトルを入力してください。");
-        return false;
-      }
-
-      if (!work.genre) {
-        alert("ジャンルを選んでください。");
-        return false;
-      }
-
-      if (!work.intro) {
-        alert("キャラ紹介文を入力してください。");
-        return false;
-      }
-
-      if (!work.story) {
-        alert("詳細説明・物語を入力してください。");
-        return false;
-      }
-
-      return true;
-    }
-
-    function publishWork() {
-      const work = getFormData();
-
-      if (!validateWork(work)) {
-        return;
-      }
-
-      upsertWork(work);
-
-      alert(
-        work.status === "公開"
-          ? "作品を投稿しました！"
-          : work.status + "として保存しました。"
-      );
-
-      resetForm();
-      showPage("works");
-    }
-
-    function saveDraft() {
-      const work = getFormData("下書き");
-
-      if (!work.title) {
-        alert("下書きには作品タイトルが必要です。");
-        return;
-      }
-
-      upsertWork(work);
-
-      alert("下書きを保存しました。");
-      resetForm();
-      showPage("mypage");
-    }
-
-    function upsertWork(work) {
-      const works = loadWorks();
-      const index =
-        works.findIndex((item) => item.id === work.id);
-
-      if (index >= 0) {
-        works[index] = work;
-      } else {
-        works.unshift(work);
-      }
-
-      try {
-        saveWorks(works);
-      } catch (error) {
-        alert(
-          "画像または投稿内容が大きすぎて保存できませんでした。画像を小さくして、もう一度お試しください。"
-        );
-        console.error(error);
-      }
-    }
-
-    function previewForm() {
-      const work = getFormData();
-
-      if (!work.title) {
-        alert("プレビューにはタイトルが必要です。");
-        return;
-      }
-
-      showWorkModal(work, true);
-    }
-
-    function resetForm() {
-      document.getElementById("editingId").value = "";
-      document.getElementById("workTitle").value = "";
-      document.getElementById("workGenre").value = "";
-      document.getElementById("workIntro").value = "";
-      document.getElementById("workStory").value = "";
-      document.getElementById("workGreeting").value = "";
-      document.getElementById("workImage").value = "";
-      document.getElementById("workStatus").value = "公開";
-
-      preparedImage = "";
-
-      const preview =
-        document.getElementById("imagePreview");
-
-      preview.removeAttribute("src");
-      preview.style.display = "none";
-
-      [
-        ["workTitle", "titleCounter", 50],
-        ["workIntro", "introCounter", 200],
-        ["workStory", "storyCounter", 5000],
-        ["workGreeting", "greetingCounter", 1000]
-      ].forEach(([input, counter, max]) => {
-        updateCounter(input, counter, max);
-      });
-    }
-
-    function createWorkCard(work, showManageButtons = false) {
-      const imageHtml = work.image
-        ? `
-          <img
-            class="work-cover"
-            src="${work.image}"
-            alt="${escapeHtml(work.title)}"
-          >
-        `
-        : `
-          <div class="placeholder-cover">
-            🎭
-          </div>
-        `;
-
-      const manageButtons = showManageButtons
-        ? `
-          <div class="work-actions">
-
-            <button
-              class="work-action"
-              onclick="editWork('${work.id}')"
-            >
-              編集
-            </button>
-
-            <button
-              class="work-action"
-              onclick="deleteWork('${work.id}')"
-            >
-              削除
-            </button>
-
-          </div>
-        `
-        : `
-          <div class="work-actions">
-
-            <button
-              class="work-action"
-              onclick="openWork('${work.id}')"
-            >
-              開く
-            </button>
-
-          </div>
-        `;
-
-      return `
-        <article class="work-card">
-
-          ${imageHtml}
-
-          <div class="work-body">
-
-            <span class="work-genre">
-              ${escapeHtml(work.genre)}
-              　${escapeHtml(work.status)}
-            </span>
-
-            <h3 class="work-title">
-              ${escapeHtml(work.title)}
-            </h3>
-
-            <p class="work-intro">
-              ${escapeHtml(work.intro)}
-            </p>
-
-            ${manageButtons}
-
-          </div>
-
-        </article>
-      `;
-    }
-
-    function renderHomeWorks() {
-      const works =
-        loadWorks()
-          .filter((work) => work.status === "公開")
-          .filter((work) => {
-            return (
-              currentGenre === "すべて" ||
-              work.genre === currentGenre
-            );
-          })
-          .slice(0, 6);
-
-      const grid =
-        document.getElementById("homeWorksGrid");
-
-      document.getElementById("homeWorksTitle").textContent =
-        currentGenre === "すべて"
-          ? "新着作品"
-          : currentGenre + "の演目";
-
-      if (!works.length) {
-        grid.innerHTML = `
-          <div class="empty-message">
-            まだ公開作品がありません。<br>
-            「作品を作る」から最初の演目を投稿してみてね。
-          </div>
-        `;
-        return;
-      }
-
-      grid.innerHTML =
-        works.map((work) => createWorkCard(work)).join("");
-    }
-
-    function renderWorks(genre) {
-      currentGenre = genre || "すべて";
-
-      const works =
-        loadWorks()
-          .filter((work) => work.status === "公開")
-          .filter((work) => {
-            return (
-              currentGenre === "すべて" ||
-              work.genre === currentGenre
-            );
-          });
-
-      const grid =
-        document.getElementById("allWorksGrid");
-
-      if (!works.length) {
-        grid.innerHTML = `
-          <div class="empty-message">
-            このジャンルには、まだ作品がありません。
-          </div>
-        `;
-        return;
-      }
-
-      grid.innerHTML =
-        works.map((work) => createWorkCard(work)).join("");
-    }
-
-    function renderMyPage() {
-      const works = loadWorks();
-
-      document.getElementById("postCount").textContent =
-        works.length;
-
-      const grid =
-        document.getElementById("myWorksGrid");
-
-      if (!works.length) {
-        grid.innerHTML = `
-          <div class="empty-message">
-            まだ投稿や下書きはありません。
-          </div>
-        `;
-        return;
-      }
-
-      grid.innerHTML =
-        works
-          .map((work) => createWorkCard(work, true))
-          .join("");
-    }
-
-    function filterGenre(genre) {
-      currentGenre = genre;
-      renderHomeWorks();
-
-      document
-        .getElementById("homeWorksGrid")
-        .scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-    }
-
-    function openWork(id) {
-      const work =
-        loadWorks().find((item) => item.id === id);
-
-      if (!work) {
-        alert("作品が見つかりませんでした。");
-        return;
-      }
-
-      showWorkModal(work, false);
-    }
-
-    function showWorkModal(work, isPreview) {
-      const imageHtml = work.image
-        ? `
-          <img
-            class="modal-cover"
-            src="${work.image}"
-            alt="${escapeHtml(work.title)}"
-          >
-        `
-        : "";
-
-      modalContent.innerHTML = `
-        <h2 class="modal-title">
-          ${escapeHtml(work.title)}
-        </h2>
-
-        ${imageHtml}
-
-        <p>
-          <span class="work-genre">
-            ${escapeHtml(work.genre)}
-            ${isPreview ? "　プレビュー" : ""}
-          </span>
-        </p>
-
-        <p class="modal-text">
-          ${escapeHtml(work.intro)}
-        </p>
-
-        <hr
-          style="
-            border:0;
-            border-top:1px solid rgba(255,225,143,.3);
-            margin:18px 0;
-          "
-        >
-
-        <p class="modal-text">
-          ${escapeHtml(work.story)}
-        </p>
-
-        ${
-          work.greeting
-            ? `
-              <hr
-                style="
-                  border:0;
-                  border-top:1px solid rgba(255,225,143,.3);
-                  margin:18px 0;
-                "
-              >
-
-              <h3 style="color:var(--light-gold);">
-                開演
-              </h3>
-
-              <p class="modal-text">
-                ${escapeHtml(work.greeting)}
-              </p>
-            `
-            : ""
-        }
-      `;
-
-      modal.classList.add("visible");
-    }
-
-    function closeModal() {
-      modal.classList.remove("visible");
-    }
-
-    modal.addEventListener("click", function(event) {
-      if (event.target === modal) {
-        closeModal();
-      }
-    });
-
-    function editWork(id) {
-      const work =
-        loadWorks().find((item) => item.id === id);
-
-      if (!work) {
-        return;
-      }
-
-      document.getElementById("editingId").value =
-        work.id;
-
-      document.getElementById("workTitle").value =
-        work.title;
-
-      document.getElementById("workGenre").value =
-        work.genre;
-
-      document.getElementById("workIntro").value =
-        work.intro;
-
-      document.getElementById("workStory").value =
-        work.story;
-
-      document.getElementById("workGreeting").value =
-        work.greeting || "";
-
-      document.getElementById("workStatus").value =
-        work.status || "公開";
-
-      preparedImage = work.image || "";
-
-      const preview =
-        document.getElementById("imagePreview");
-
-      if (preparedImage) {
-        preview.src = preparedImage;
-        preview.style.display = "block";
-      } else {
-        preview.removeAttribute("src");
-        preview.style.display = "none";
-      }
-
-      showPage("create");
-
-      [
-        ["workTitle", "titleCounter", 50],
-        ["workIntro", "introCounter", 200],
-        ["workStory", "storyCounter", 5000],
-        ["workGreeting", "greetingCounter", 1000]
-      ].forEach(([input, counter, max]) => {
-        updateCounter(input, counter, max);
-      });
-    }
-
-    function deleteWork(id) {
-      const confirmed =
-        confirm("この作品を削除しますか？");
-
-      if (!confirmed) {
-        return;
-      }
-
-      const works =
-        loadWorks().filter((item) => item.id !== id);
-
-      saveWorks(works);
-      renderMyPage();
-      renderHomeWorks();
-    }
-
-    function deleteAllWorks() {
-      const confirmed =
-        confirm(
-          "投稿・下書きをすべて削除します。この操作は元に戻せません。"
-        );
-
-      if (!confirmed) {
-        return;
-      }
-
-      localStorage.removeItem(STORAGE_KEY);
-      renderHomeWorks();
-      renderWorks("すべて");
-      renderMyPage();
-
-      alert("すべての投稿データを削除しました。");
-    }
-
-    function toggleSwitch(button) {
-      button.classList.toggle("on");
-    }
-
-    renderHomeWorks();
-  </script>
-
-</body>
-</html>
